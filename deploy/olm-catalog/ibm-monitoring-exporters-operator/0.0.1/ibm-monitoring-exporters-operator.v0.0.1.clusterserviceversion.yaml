@@ -1,0 +1,206 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: ClusterServiceVersion
+metadata:
+  annotations:
+    alm-examples: |-
+      [
+        {
+          "apiVersion": "monitoring.operator.ibm.com/v1alpha1",
+          "kind": "Exporter",
+          "metadata": {
+            "name": "ibm-monitoring-exporter"
+          },
+          "spec": {
+            "certs": {
+              "caSecret": "cluster-ca-cert",
+              "caSertFileName": "tls.crt",
+              "clusterIssuer": "icp-ca-issuer",
+              "exporterSecret": "ibm-monitoring-exporter-certs",
+              "monitoringClientSecret": "ibm-monitoring-client-certs",
+              "provider": "ocp"
+            },
+            "collectd": {
+              "collectorPort": 25826,
+              "enable": true,
+              "image": "",
+              "metricsPort": 8443,
+              "resource": {},
+              "routerResource": {
+                "limits": {
+                  "cpu": "200m",
+                  "memory": "256Mi"
+                },
+                "requests": {
+                  "cpu": "10m",
+                  "memory": "64Mi"
+                }
+              },
+              "serviceAccount": "collectd"
+            },
+            "imagePullSecrets": [
+              "infra-registry-key"
+            ],
+            "kubeStateMetrics": {
+              "enable": true,
+              "image": "",
+              "port": 8443,
+              "serviceAccount": "kube-state-metrics"
+            },
+            "nodeExporter": {
+              "enable": true,
+              "healtyPort": 8556,
+              "hostPort": 9109,
+              "image": "",
+              "serviceAccount": "node-exporter",
+              "servicePort": 8555
+            },
+            "routerImage": ""
+          }
+        }
+      ]
+    capabilities: Basic Install
+  name: ibm-monitoring-exporters-operator.v0.0.1
+  namespace: placeholder
+spec:
+  apiservicedefinitions: {}
+  customresourcedefinitions:
+    owned:
+    - description: Exporter is the Schema for the exporters API
+      kind: Exporter
+      name: exporters.monitoring.operator.ibm.com
+      version: v1alpha1
+  description: Placeholder description
+  displayName: Ibm Monitoring Exporters Operator
+  install:
+    spec:
+      deployments:
+      - name: ibm-monitoring-exporters-operator
+        spec:
+          replicas: 1
+          selector:
+            matchLabels:
+              name: ibm-monitoring-exporters-operator
+          strategy: {}
+          template:
+            metadata:
+              labels:
+                name: ibm-monitoring-exporters-operator
+            spec:
+              containers:
+              - command:
+                - ibm-monitoring-exporters-operator
+                env:
+                - name: WATCH_NAMESPACE
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.annotations['olm.targetNamespaces']
+                - name: POD_NAME
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.name
+                - name: OPERATOR_NAME
+                  value: ibm-monitoring-exporters-operator
+                image: REPLACE_IMAGE
+                imagePullPolicy: Always
+                name: ibm-monitoring-exporters-operator
+                resources: {}
+              serviceAccountName: ibm-monitoring-exporters-operator
+      permissions:
+      - rules:
+        - apiGroups:
+          - ""
+          resources:
+          - pods
+          - services
+          - services/finalizers
+          - endpoints
+          - persistentvolumeclaims
+          - events
+          - configmaps
+          - secrets
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - apps
+          resources:
+          - deployments
+          - daemonsets
+          - replicasets
+          - statefulsets
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - monitoring.coreos.com
+          resources:
+          - servicemonitors
+          verbs:
+          - get
+          - create
+        - apiGroups:
+          - apps
+          resourceNames:
+          - ibm-monitoring-exporters-operator
+          resources:
+          - deployments/finalizers
+          verbs:
+          - update
+        - apiGroups:
+          - ""
+          resources:
+          - pods
+          verbs:
+          - get
+        - apiGroups:
+          - apps
+          resources:
+          - replicasets
+          - deployments
+          verbs:
+          - get
+        - apiGroups:
+          - monitoring.operator.ibm.com
+          resources:
+          - '*'
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - security.openshift.io
+          resourceNames:
+          - anyuid
+          resources:
+          - securitycontextconstraints
+          verbs:
+          - use
+        serviceAccountName: ibm-monitoring-exporters-operator
+    strategy: deployment
+  installModes:
+  - supported: true
+    type: OwnNamespace
+  - supported: true
+    type: SingleNamespace
+  - supported: false
+    type: MultiNamespace
+  - supported: true
+    type: AllNamespaces
+  maturity: alpha
+  provider: {}
+  replaces: ibm-monitoring-exporters-operator.v0.0.0
+  version: 0.0.1

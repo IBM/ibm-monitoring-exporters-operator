@@ -1,0 +1,214 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    openshift.io/scc: node-exporter
+  creationTimestamp: "2020-01-17T14:07:31Z"
+  generateName: node-exporter-
+  labels:
+    app: node-exporter
+    controller-revision-hash: 796b589658
+    pod-template-generation: "1"
+  name: node-exporter-zqj6k
+  namespace: openshift-monitoring
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: DaemonSet
+    name: node-exporter
+    uid: b3b7b8bb-3932-11ea-b7ca-00000a100caf
+  resourceVersion: "8008229"
+  selfLink: /api/v1/namespaces/openshift-monitoring/pods/node-exporter-zqj6k
+  uid: b3da5ebf-3932-11ea-b7ca-00000a100caf
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchFields:
+          - key: metadata.name
+            operator: In
+            values:
+            - master0.dybo-ocp4.os.fyre.ibm.com
+  containers:
+  - args:
+    - --web.listen-address=127.0.0.1:9100
+    - --path.procfs=/host/proc
+    - --path.sysfs=/host/sys
+    - --path.rootfs=/host/root
+    - --collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker/.+)($|/)
+    - --collector.filesystem.ignored-fs-types=^(autofs|binfmt_misc|cgroup|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|mqueue|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|sysfs|tracefs)$
+    - --no-collector.wifi
+    image: quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:fb559dae37782e6cccb56ffbec74104989979ad6e8b34b1803bb630b4431b3b6
+    imagePullPolicy: IfNotPresent
+    name: node-exporter
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /host/proc
+      name: proc
+    - mountPath: /host/sys
+      name: sys
+    - mountPath: /host/root
+      mountPropagation: HostToContainer
+      name: root
+      readOnly: true
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: node-exporter-token-dtx66
+      readOnly: true
+  - args:
+    - --logtostderr
+    - --secure-listen-address=$(IP):9100
+    - --tls-cipher-suites=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256
+    - --upstream=http://127.0.0.1:9100/
+    - --tls-cert-file=/etc/tls/private/tls.crt
+    - --tls-private-key-file=/etc/tls/private/tls.key
+    env:
+    - name: IP
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: status.podIP
+    image: quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:39e4cab7d820c14689b17dd5d6e9bb678e1c9601d3eb59dd5c692ed1b63db3bd
+    imagePullPolicy: IfNotPresent
+    name: kube-rbac-proxy
+    ports:
+    - containerPort: 9100
+      hostPort: 9100
+      name: https
+      protocol: TCP
+    resources:
+      requests:
+        cpu: 10m
+        memory: 20Mi
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: FallbackToLogsOnError
+    volumeMounts:
+    - mountPath: /etc/tls/private
+      name: node-exporter-tls
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: node-exporter-token-dtx66
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  hostNetwork: true
+  hostPID: true
+  imagePullSecrets:
+  - name: node-exporter-dockercfg-nqnjx
+  nodeName: master0.dybo-ocp4.os.fyre.ibm.com
+  nodeSelector:
+    kubernetes.io/os: linux
+  priority: 2000000000
+  priorityClassName: system-cluster-critical
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: node-exporter
+  serviceAccountName: node-exporter
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoSchedule
+    key: node.kubernetes.io/memory-pressure
+    operator: Exists
+  - effect: NoSchedule
+    key: node.kubernetes.io/network-unavailable
+    operator: Exists
+  - operator: Exists
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+  - effect: NoSchedule
+    key: node.kubernetes.io/disk-pressure
+    operator: Exists
+  - effect: NoSchedule
+    key: node.kubernetes.io/pid-pressure
+    operator: Exists
+  - effect: NoSchedule
+    key: node.kubernetes.io/unschedulable
+    operator: Exists
+  volumes:
+  - hostPath:
+      path: /proc
+      type: ""
+    name: proc
+  - hostPath:
+      path: /sys
+      type: ""
+    name: sys
+  - hostPath:
+      path: /
+      type: ""
+    name: root
+  - name: node-exporter-tls
+    secret:
+      defaultMode: 420
+      secretName: node-exporter-tls
+  - name: node-exporter-token-dtx66
+    secret:
+      defaultMode: 420
+      secretName: node-exporter-token-dtx66
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2020-01-17T14:07:31Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2020-01-31T01:23:29Z"
+    status: "True"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2020-01-31T01:23:29Z"
+    status: "True"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2020-01-17T14:07:31Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: cri-o://ede44fd502f4b9e505a3c272dd7ef820d37cdf9ede5a10aabcbe8b13a3b8427e
+    image: quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:39e4cab7d820c14689b17dd5d6e9bb678e1c9601d3eb59dd5c692ed1b63db3bd
+    imageID: quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:39e4cab7d820c14689b17dd5d6e9bb678e1c9601d3eb59dd5c692ed1b63db3bd
+    lastState:
+      terminated:
+        containerID: cri-o://a074ab6453c4f58d97d02dbf019b150f29db1dd2da9a021cb7cf9a3c3192628f
+        exitCode: 255
+        finishedAt: "2020-01-31T01:22:19Z"
+        message: |
+          I0117 14:07:49.452242   40922 main.go:241] Reading certificate files
+          I0117 14:07:49.452673   40922 main.go:274] Starting TCP socket on 10.16.12.175:9100
+          I0117 14:07:49.452978   40922 main.go:281] Listening securely on 10.16.12.175:9100
+        reason: Error
+        startedAt: "2020-01-17T14:07:49Z"
+    name: kube-rbac-proxy
+    ready: true
+    restartCount: 1
+    state:
+      running:
+        startedAt: "2020-01-31T01:23:29Z"
+  - containerID: cri-o://c7bb189692888bc6242d1c1cb158ac9b42a320d4b78ae55b44d2694021757ee1
+    image: quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:fb559dae37782e6cccb56ffbec74104989979ad6e8b34b1803bb630b4431b3b6
+    imageID: quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:fb559dae37782e6cccb56ffbec74104989979ad6e8b34b1803bb630b4431b3b6
+    lastState:
+      terminated:
+        containerID: cri-o://9927522b16a92b0c23a394e4c61d762584e0e7af38c90c0622507448e629898e
+        exitCode: 255
+        finishedAt: "2020-01-31T01:22:17Z"
+        reason: Error
+        startedAt: "2020-01-17T14:07:39Z"
+    name: node-exporter
+    ready: true
+    restartCount: 1
+    state:
+      running:
+        startedAt: "2020-01-31T01:23:26Z"
+  hostIP: 10.16.12.175
+  phase: Running
+  podIP: 10.16.12.175
+  qosClass: Burstable
+  startTime: "2020-01-17T14:07:31Z"

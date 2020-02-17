@@ -1,0 +1,11 @@
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: ibm-monitoring-exporters-operator
+subjects:
+- kind: ServiceAccount
+  name: ibm-monitoring-exporters-operator
+roleRef:
+  kind: Role
+  name: ibm-monitoring-exporters-operator
+  apiGroup: rbac.authorization.k8s.io

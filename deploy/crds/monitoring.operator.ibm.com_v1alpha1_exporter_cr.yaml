@@ -1,0 +1,45 @@
+apiVersion: monitoring.operator.ibm.com/v1alpha1
+kind: Exporter
+metadata:
+  name: ibm-monitoring-exporter
+spec:
+  routerImage: ""
+  certs:
+    provider: "ocp"
+    caSecret: cluster-ca-cert
+    caSertFileName: tls.crt
+    clusterIssuer: "icp-ca-issuer"
+    exporterSecret: "ibm-monitoring-exporter-certs"
+    monitoringClientSecret: "ibm-monitoring-client-certs"
+  imagePullSecrets:
+    - infra-registry-key
+  collectd:
+    enable: true
+    serviceAccount: collectd
+    metricsPort: 8443
+    collectorPort: 25826
+    image: ""
+    routerResource:
+      limits:
+        cpu: 200m
+        memory: 256Mi
+      requests:
+        cpu: 10m
+        memory: 64Mi
+    resource: {}
+  nodeExporter:
+    enable: true
+    serviceAccount: node-exporter
+    #hostPort: 9100
+    #servicePort: 8445
+    #healtyPort: 8446
+    hostPort: 9109
+    servicePort: 8555
+    healtyPort: 8556
+    image: ""
+  kubeStateMetrics:
+    enable: true
+    serviceAccount: kube-state-metrics
+    port: 8443
+    image: ""
+
