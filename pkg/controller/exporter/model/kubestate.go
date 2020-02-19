@@ -20,7 +20,7 @@ func KubeStateService(cr *monitoringv1alpha1.Exporter) *v1.Service {
 		Spec: v1.ServiceSpec{
 			Ports:    getKubeStateServicePorts(cr),
 			Selector: getKubeStateLabels(cr),
-			Type:     "ClusterIP",
+			Type:     v1.ServiceTypeClusterIP,
 		},
 	}
 }
@@ -125,7 +125,8 @@ func getKubeStateContainer(cr *monitoringv1alpha1.Exporter) *v1.Container {
 		},
 		InitialDelaySeconds: 30,
 		TimeoutSeconds:      30,
-		PeriodSeconds:       10}
+		PeriodSeconds:       10,
+	}
 
 	container := &v1.Container{
 		Name:            "kubestatemetrics",

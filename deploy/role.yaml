@@ -86,3 +86,16 @@ rules:
   - securitycontextconstraints
   verbs:
   - use
+- apiGroups:
+  - certmanager.k8s.io
+  resources:
+  - certificates
+  - issuers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch

@@ -38,35 +38,19 @@ spec:
                   description: All certificates for monitoring stack should be signed
                     by this CA
                   type: string
-                caSertFileName:
-                  type: string
-                clusterIssuer:
-                  description: The clusterissuer name. It is used when provider is
-                    certmanager
-                  type: string
                 exporterSecret:
                   description: Exorters' tls cert. Define the secret name. It will
                     not be recreated when existing It can be created by either this
                     operator or prometheus operator. Make sure secret name defined
                     by both operator same
                   type: string
-                monitoringClientSecret:
-                  description: Define monitroing stack client(prometheus for example)'s
-                    tls cert secret. It will not be recreated when existing It can
-                    be created by either this operator or prometheus operator. Make
-                    sure secret name defined by both operator same
-                  type: string
-                provider:
-                  description: Specify how secrets are generated. It can be empty,
-                    certmanager or ocp certmanager does not work before go module
-                    confict issue being resolved but it should be the recommanded
-                    one. When it is empty operator will use existing sercret Secret
-                    will not be regenerated if secret with secretName exists
+                issuer:
+                  description: The clusterissuer name. It is used when provider is
+                    certmanager
                   type: string
               required:
               - caSecret
               - exporterSecret
-              - monitoringClientSecret
               type: object
             collectd:
               description: Collectd defines desired state of Collectd exporter

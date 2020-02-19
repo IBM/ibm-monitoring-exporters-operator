@@ -71,11 +71,6 @@ func getCollectdNginxConfig(cr *monitoringv1alpha1.Exporter) (string, error) {
 		ListenPort:   cr.Spec.Collectd.MetricsPort,
 		SSLCipers:    sslCiphers,
 	}
-	if cr.Spec.Certs.CACertFileName == "" {
-		paras.CACertFileName = "tls.crt"
-	} else {
-		paras.CACertFileName = cr.Spec.Certs.CACertFileName
-	}
 	var tplBuffer bytes.Buffer
 	if err := routerNginxTempl.Execute(&tplBuffer, paras); err != nil {
 		return "", err
@@ -145,11 +140,6 @@ func getNodeExporterNginxConfig(cr *monitoringv1alpha1.Exporter) (string, error)
 		SSLCipers:    sslCiphers,
 		HealthyPort:  cr.Spec.NodeExporter.HealthyPort,
 	}
-	if cr.Spec.Certs.CACertFileName == "" {
-		paras.CACertFileName = "tls.crt"
-	} else {
-		paras.CACertFileName = cr.Spec.Certs.CACertFileName
-	}
 	var tplBuffer bytes.Buffer
 	if err := routerNginxTempl.Execute(&tplBuffer, paras); err != nil {
 		return "", err
@@ -162,11 +152,6 @@ func getKubeStateMetricsNginxConfig(cr *monitoringv1alpha1.Exporter) (string, er
 		ListenPort:   cr.Spec.KubeStateMetrics.Port,
 		SSLCipers:    sslCiphers,
 	}
-	if cr.Spec.Certs.CACertFileName == "" {
-		paras.CACertFileName = "tls.crt"
-	} else {
-		paras.CACertFileName = cr.Spec.Certs.CACertFileName
-	}
 	var tplBuffer bytes.Buffer
 	if err := routerNginxTempl.Execute(&tplBuffer, paras); err != nil {
 		return "", err
@@ -175,11 +160,10 @@ func getKubeStateMetricsNginxConfig(cr *monitoringv1alpha1.Exporter) (string, er
 }
 
 type routerNginxParas struct {
-	UpstreamPort   int32
-	ListenPort     int32
-	CACertFileName string
-	SSLCipers      string
-	HealthyPort    int32
+	UpstreamPort int32
+	ListenPort   int32
+	SSLCipers    string
+	HealthyPort  int32
 }
 
 func init() {

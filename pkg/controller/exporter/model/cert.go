@@ -2,27 +2,35 @@ package model
 
 import (
 	monitoringv1alpha1 "github.com/IBM/ibm-monitoring-exporters-operator/pkg/apis/monitoring/v1alpha1"
-	cmv1alpha3 "github.com/jetstack/cert-manager/pkg/apis/certmanager/v1alpha3"
-	cmmetav1 "github.com/jetstack/cert-manager/pkg/apis/meta/v1"
+	cmv1alpha1 "github.com/jetstack/cert-manager/pkg/apis/certmanager/v1alpha1"
+
+	//cmmetav1 "github.com/jetstack/cert-manager/pkg/apis/meta/v1"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	v12 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // CertManagerCert creates Certificate object
-func CertManagerCert(cr *monitoringv1alpha1.Exporter) *cmv1alpha3.Certificate {
-	return &cmv1alpha3.Certificate{
+func CertManagerCert(cr *monitoringv1alpha1.Exporter) *cmv1alpha1.Certificate {
+	/*
+	  commonName: "monitoring-service"
+	  dnsNames:
+	  - "*.{{ .Release.Namespace }}.pod.{{ .Values.clusterDomain }}"
+	*/
+	return &cmv1alpha1.Certificate{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      cr.Spec.Certs.ExporterSecret,
 			Namespace: cr.Namespace,
 			Labels:    getCertLabels(cr),
 		},
-		Spec: cmv1alpha3.CertificateSpec{
+		Spec: cmv1alpha1.CertificateSpec{
 			SecretName: cr.Spec.Certs.ExporterSecret,
-			IssuerRef: cmmetav1.ObjectReference{
-				Name: cr.Spec.Certs.ClusterIssuer,
-				Kind: "ClusterIssuer",
+			IssuerRef: cmv1alpha1.ObjectReference{
+				Name: cr.Spec.Certs.Issuer,
+				Kind: cmv1alpha1.IssuerKind,
 			},
+			CommonName: "ibm-monitoring",
+			DNSNames:   []string{"*." + cr.Namespace + ".pod"},
 		},
 	}
 }

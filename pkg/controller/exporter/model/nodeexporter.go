@@ -20,7 +20,7 @@ func NodeExporterService(cr *monitoringv1alpha1.Exporter) *v1.Service {
 			Annotations: getNodeExporterAnnotations(cr),
 		},
 		Spec: v1.ServiceSpec{
-			Ports:    getKubeStateServicePorts(cr),
+			Ports:    getNodeExporterPorts(cr),
 			Selector: getNodeExporterLabels(cr),
 			Type:     "ClusterIP",
 		},
@@ -31,7 +31,7 @@ func NodeExporterService(cr *monitoringv1alpha1.Exporter) *v1.Service {
 func UpdatedNodeExporterService(cr *monitoringv1alpha1.Exporter, currService *v1.Service) *v1.Service {
 	newService := currService.DeepCopy()
 	newService.ObjectMeta.Labels = getNodeExporterLabels(cr)
-	newService.Spec.Ports = getKubeStateServicePorts(cr)
+	newService.Spec.Ports = getNodeExporterPorts(cr)
 	newService.Spec.Selector = getNodeExporterLabels(cr)
 	return newService
 
@@ -172,6 +172,7 @@ func getNodeExporterAnnotations(cr *monitoringv1alpha1.Exporter) map[string]stri
 	annotations := make(map[string]string)
 	annotations["prometheus.io/scrape"] = "true"
 	annotations["prometheus.io/scheme"] = "https"
+	annotations["skip.verify"] = "true"
 	return annotations
 }
 func getNodeExporterPorts(cr *monitoringv1alpha1.Exporter) []v1.ServicePort {

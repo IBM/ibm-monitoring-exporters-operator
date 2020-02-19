@@ -19,21 +19,12 @@ type ExporterSpec struct {
 // Certs defines certifications used by all exporters
 type Certs struct {
 	// All certificates for monitoring stack should be signed by this CA
-	CASecret       string `json:"caSecret"`
-	CACertFileName string `json:"caSertFileName,omitempty"`
-	// Specify how secrets are generated. It can be empty, certmanager or ocp
-	// certmanager does not work before go module confict issue being resolved but it should be the recommanded one.
-	// When it is empty operator will use existing sercret
-	// Secret will not be regenerated if secret with secretName exists
-	Provider string `json:"provider,omitempty"`
+	CASecret string `json:"caSecret"`
 	// Exorters' tls cert. Define the secret name. It will not be recreated when existing
 	// It can be created by either this operator or prometheus operator. Make sure secret name defined by both operator same
 	ExporterSecret string `json:"exporterSecret"`
-	//Define monitroing stack client(prometheus for example)'s tls cert secret. It will not be recreated when existing
-	//It can be created by either this operator or prometheus operator. Make sure secret name defined by both operator same
-	MonitoringClientSecret string `json:"monitoringClientSecret"`
 	// The clusterissuer name. It is used when provider is certmanager
-	ClusterIssuer string `json:"clusterIssuer,omitempty"`
+	Issuer string `json:"issuer,omitempty"`
 }
 
 // Collectd defines desired state of Collectd exporter

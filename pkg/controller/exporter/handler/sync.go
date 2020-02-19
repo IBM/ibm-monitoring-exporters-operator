@@ -2,7 +2,6 @@ package handler
 
 import (
 	"context"
-	"errors"
 
 	monitoringv1alpha1 "github.com/IBM/ibm-monitoring-exporters-operator/pkg/apis/monitoring/v1alpha1"
 	"github.com/IBM/ibm-monitoring-exporters-operator/pkg/controller/exporter/model"
@@ -101,12 +100,6 @@ func (h *Handler) checkCASecret() error {
 	if err := h.Client.Get(h.Context, key, secret); err != nil {
 		log.Error(err, "CA Secret does not exist")
 		return runtime.ErrInvalidLengthGenerated
-	}
-	if _, ok := secret.Data[h.CR.Spec.Certs.CACertFileName]; !ok {
-		e := errors.New("A secret does not contain required data")
-		log.Error(e, "")
-		return e
-
 	}
 	return nil
 }

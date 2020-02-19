@@ -13,11 +13,9 @@ metadata:
           "spec": {
             "certs": {
               "caSecret": "cluster-ca-cert",
-              "caSertFileName": "tls.crt",
-              "clusterIssuer": "icp-ca-issuer",
               "exporterSecret": "ibm-monitoring-exporter-certs",
-              "monitoringClientSecret": "ibm-monitoring-client-certs",
-              "provider": "ocp"
+              "issuer": "icp-ca-issuer",
+              "monitoringClientSecret": "ibm-monitoring-client-certs"
             },
             "collectd": {
               "collectorPort": 25826,
@@ -189,6 +187,19 @@ spec:
           - securitycontextconstraints
           verbs:
           - use
+        - apiGroups:
+          - certmanager.k8s.io
+          resources:
+          - certificates
+          - issuers
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
         serviceAccountName: ibm-monitoring-exporters-operator
     strategy: deployment
   installModes:
