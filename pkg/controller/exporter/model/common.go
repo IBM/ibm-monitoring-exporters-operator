@@ -1,3 +1,19 @@
+//
+// Copyright 2020 IBM Corporation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
 package model
 
 //ExporterKind means which kind of exporter
@@ -21,7 +37,7 @@ func (r *requeueError) Error() string {
 	return "Component " + r.component + "requires to be requeued: " + r.reason
 }
 func (r *requeueError) Reason() string {
-	return r.Reason()
+	return r.reason
 }
 
 //IsRequeueErr tells if error type is requeueError
@@ -34,6 +50,15 @@ func IsRequeueErr(e error) bool {
 }
 
 const (
+	//AppLabelKey is key of label
+	AppLabelKey = "cs/app"
+	//AppLabekValue is value of label
+	AppLabekValue = "ibm-monitoring"
+	//TrueStr String of true value
+	TrueStr = "true"
+	//HTTPSStr string of https
+	HTTPSStr = "https"
+
 	routerConfigVolName = "router-config"
 	routerEntryVolName  = "router-entry"
 	caCertsVolName      = "monitoring-ca-certs"

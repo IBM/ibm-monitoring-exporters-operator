@@ -1,12 +1,10 @@
-#!/bin/bash
-#
-# Copyright 2020 IBM Corporation
+# Copyright 2019 The Kubernetes Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,25 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-.DEFAULT_GOAL:=help
-# Specify whether this repo is build locally or not, default values is '1';
-# If set to 1, then you need to also set 'DOCKER_USERNAME' and 'DOCKER_PASSWORD'
-# environment variables before build the repo.
+# This repo is build locally for dev/test by default;
+# Override this variable in CI env.
 BUILD_LOCALLY ?= 1
-
-# The namespcethat operator will be deployed in
-NAMESPACE=ibm-monitoring
 
 # Image URL to use all building/pushing image targets;
 # Use your own docker registry and image name for dev/test by overridding the IMG and REGISTRY environment variable.
 IMG ?= ibm-monitoring-exporters-operator
 REGISTRY ?= quay.io/opencloudio
 CSV_VERSION ?= 0.0.1
-
-QUAY_USERNAME ?=
-QUAY_PASSWORD ?=
-
-MARKDOWN_LINT_WHITELIST=https://quay.io/cnr
 
 # Github host to use for checking the source tree;
 # Override this variable ue with your own value if you're working on forked repo.
@@ -63,6 +51,39 @@ else
     $(error "This system's OS $(LOCAL_OS) isn't recognized/supported")
 endif
 
+ARCH := $(shell uname -m)
+LOCAL_ARCH := "amd64"
+ifeq ($(ARCH),x86_64)
+    LOCAL_ARCH="amd64"
+else ifeq ($(ARCH),ppc64le)
+    LOCAL_ARCH="ppc64le"
+else ifeq ($(ARCH),s390x)
+    LOCAL_ARCH="s390x"
+else
+    $(error "This system's ARCH $(ARCH) isn't recognized/supported")
+endif
+
+# Setup DOCKER_BUILD_OPTS after all includes complete
+#Variables for redhat ubi certification required labels
+IMAGE_NAME=$(IMG)
+IMAGE_DISPLAY_NAME=IBM Monitoring Exporter Operator
+IMAGE_MAINTAINER=dybo@cn.ibm.com
+IMAGE_VENDOR=IBM
+IMAGE_VERSION=$(VERSION)
+IMAGE_DESCRIPTION=Operator used to install prometheus exporters in a kubernetes cluster
+IMAGE_SUMMARY=$(IMAGE_DESCRIPTION)
+IMAGE_OPENSHIFT_TAGS=monitoring
+$(eval WORKING_CHANGES := $(shell git status --porcelain))
+$(eval BUILD_DATE := $(shell date +%m/%d@%H:%M:%S))
+$(eval GIT_COMMIT := $(shell git rev-parse --short HEAD))
+$(eval VCS_REF := $(GIT_COMMIT))
+IMAGE_RELEASE=$(VCS_REF)
+GIT_REMOTE_URL = $(shell git config --get remote.origin.url)
+$(eval DOCKER_BUILD_OPTS := --build-arg "IMAGE_NAME=$(IMAGE_NAME)" --build-arg "IMAGE_DISPLAY_NAME=$(IMAGE_DISPLAY_NAME)" --build-arg "IMAGE_MAINTAINER=$(IMAGE_MAINTAINER)" --build-arg "IMAGE_VENDOR=$(IMAGE_VENDOR)" --build-arg "IMAGE_VERSION=$(IMAGE_VERSION)" --build-arg "IMAGE_RELEASE=$(IMAGE_RELEASE)" --build-arg "IMAGE_DESCRIPTION=$(IMAGE_DESCRIPTION)" --build-arg "IMAGE_SUMMARY=$(IMAGE_SUMMARY)" --build-arg "IMAGE_OPENSHIFT_TAGS=$(IMAGE_OPENSHIFT_TAGS)" --build-arg "VCS_REF=$(VCS_REF)" --build-arg "VCS_URL=$(GIT_REMOTE_URL)" --build-arg "SELF_METER_IMAGE_TAG=$(SELF_METER_IMAGE_TAG)")
+
+
+all: fmt check test coverage build images
+
 ifneq ("$(realpath $(DEST))", "$(realpath $(PWD))")
     $(error Please run 'make' from $(DEST). Current directory is $(PWD))
 endif
@@ -78,88 +99,120 @@ $(GOBIN):
 
 work: $(GOBIN)
 
-##@ Application
-
-install: ## Install all resources (CR/CRD's, RBCA and Operator)
-	@echo ....... Set environment variables ......
-	- export DEPLOY_DIR=deploy/crds
-	- export WATCH_NAMESPACE=${NAMESPACE}
-	@echo ....... Creating namespace ....... 
-	- kubectl create namespace ${NAMESPACE}
-	@echo ....... Applying CRDS and Operator .......
-	- kubectl apply -f deploy/crds/operator.ibm.com_metaoperatorcatalogs_crd.yaml
-	- kubectl apply -f deploy/crds/operator.ibm.com_metaoperatorconfigs_crd.yaml
-	- kubectl apply -f deploy/crds/operator.ibm.com_metaoperatorsets_crd.yaml
-	@echo ....... Applying RBAC .......
-	- kubectl apply -f deploy/service_account.yaml -n ${NAMESPACE}
-	- kubectl apply -f deploy/role.yaml
-	- kubectl apply -f deploy/role_binding.yaml
-	@echo ....... Applying Operator .......
-	- kubectl apply -f deploy/operator.yaml -n ${NAMESPACE}
-	@echo ....... Creating the Instance .......
-	- kubectl apply -f deploy/crds/operator.ibm.com_v1alpha1_metaoperatorset_cr.yaml -n ${NAMESPACE}
-
-uninstall: ## Uninstall all that all performed in the $ make install
-	@echo ....... Uninstalling .......
-	@echo ....... Deleting CR .......
-	- kubectl delete -f deploy/crds/operator.ibm.com_v1alpha1_metaoperatorset_cr.yaml -n ${NAMESPACE}
-	@echo ....... Deleting Operator .......
-	- kubectl delete -f deploy/operator.yaml -n ${NAMESPACE}
-	@echo ....... Deleting CRDs.......
-	- kubectl delete -f deploy/crds/operator.ibm.com_metaoperatorconfigs_crd.yaml
-	- kubectl delete -f deploy/crds/operator.ibm.com_metaoperatorsets_crd.yaml
-	- kubectl delete -f deploy/crds/operator.ibm.com_metaoperatorcatalogs_crd.yaml
-	@echo ....... Deleting Rules and Service Account .......
-	- kubectl delete -f deploy/role_binding.yaml
-	- kubectl delete -f deploy/service_account.yaml -n ${NAMESPACE}
-	- kubectl delete -f deploy/role.yaml
-	@echo ....... Deleting namespace ${NAMESPACE}.......
-	- kubectl delete namespace ${NAMESPACE}
-
-##@ Development
+############################################################
+# format section
+############################################################
 
 # All available format: format-go format-protos format-python
 # Default value will run all formats, override these make target with your requirements:
 #    eg: fmt: format-go format-protos
-fmt: format-go ## Format all go code
+fmt: format-go format-protos format-python
+
+############################################################
+# check section
+############################################################
+
+check: lint
 
 # All available linters: lint-dockerfiles lint-scripts lint-yaml lint-copyright-banner lint-go lint-python lint-helm lint-markdown lint-sass lint-typescript lint-protos
 # Default value will run all linters, override these make target with your requirements:
 #    eg: lint: lint-go lint-yaml
-check: lint-all ## Check all files lint error
+lint: lint-all
 
-code-vet: ## Run go vet for this project. More info: https://golang.org/cmd/vet/
-	@echo go vet
-	go vet $$(go list ./... )
+############################################################
+# test section
+############################################################
 
-code-fmt: ## Run go fmt for this project
-	@echo go fmt
-	go fmt $$(go list ./... )
+test:
+	@go test ${TESTARGS} ./...
 
-code-tidy: ## Run go mod tidy to update dependencies
-	@echo go mod tidy
-	go mod tidy -v
+############################################################
+# coverage section
+############################################################
 
-code-lint: ## Run golangci-lint to lint the code
-	@if  ! [ -x "$$(command -v golangci-lint)" ]; then echo "Don't find golangci-lint. Installing golangci-lint"; curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s -- -b "$$(go env GOPATH)"/bin v1.21.0; fi;
-	@golangci-lint run --disable-all \
-		--deadline 5m \
-		--enable=nakedret \
-		--enable=interfacer \
-		--enable=varcheck \
-		--enable=deadcode \
-		--enable=structcheck \
-		--enable=misspell \
-		--enable=maligned \
-		--enable=ineffassign \
-		--enable=goconst \
-		--enable=goimports \
-		--enable=errcheck \
-		--enable=unparam \
-		--enable=golint \
-		--fix
+coverage:
+	@common/scripts/codecov.sh ${BUILD_LOCALLY}
 
-code-gen: ## Run the operator-sdk commands to generated code (k8s and openapi and csv)
+############################################################
+# install operator sdk section
+############################################################
+
+install-operator-sdk: 
+	@operator-sdk version 2> /dev/null ; if [ $$? -ne 0 ]; then ./common/scripts/install-operator-sdk.sh; fi
+
+############################################################
+# build section
+############################################################
+
+build: build-amd64 build-ppc64le build-s390x
+
+build-amd64:
+	@echo "Building the ${IMG} amd64 binary..."
+	@GOARCH=amd64 common/scripts/gobuild.sh build/_output/bin/$(IMG) ./cmd/manager
+
+build-ppc64le:
+	@echo "Building the ${IMG} ppc64le binary..."
+	@GOARCH=ppc64le common/scripts/gobuild.sh build/_output/bin/$(IMG)-ppc64le ./cmd/manager
+
+build-s390x:
+	@echo "Building the ${IMG} s390x binary..."
+	@GOARCH=s390x common/scripts/gobuild.sh build/_output/bin/$(IMG)-s390x ./cmd/manager
+
+local:
+	@GOOS=darwin common/scripts/gobuild.sh build/_output/bin/$(IMG) ./cmd/manager
+
+############################################################
+# images section
+############################################################
+
+ifeq ($(BUILD_LOCALLY),0)
+    export CONFIG_DOCKER_TARGET = config-docker
+config-docker:
+endif
+
+
+build-image-amd64: build-amd64
+	@docker build -t $(REGISTRY)/$(IMG)-amd64:$(VERSION) $(DOCKER_BUILD_OPTS) --build-arg "IMAGE_NAME_ARCH=$(IMAGE_NAME)-amd64" -f build/Dockerfile .
+
+build-image-ppc64le: build-ppc64le
+	@docker run --rm --privileged multiarch/qemu-user-static:register --reset
+	@docker build -t $(REGISTRY)/$(IMG)-ppc64le:$(VERSION) $(DOCKER_BUILD_OPTS) --build-arg "IMAGE_NAME_ARCH=$(IMAGE_NAME)-ppc64le" -f build/Dockerfile.ppc64le .
+
+build-image-s390x: build-s390x
+	@docker run --rm --privileged multiarch/qemu-user-static:register --reset
+	@docker build -t $(REGISTRY)/$(IMG)-s390x:$(VERSION) $(DOCKER_BUILD_OPTS) --build-arg "IMAGE_NAME_ARCH=$(IMAGE_NAME)-s390x" -f build/Dockerfile.s390x .
+
+push-image-amd64: $(CONFIG_DOCKER_TARGET) build-image-amd64
+	@docker push $(REGISTRY)/$(IMG)-amd64:$(VERSION)
+
+push-image-ppc64le: $(CONFIG_DOCKER_TARGET) build-image-ppc64le
+	@docker push $(REGISTRY)/$(IMG)-ppc64le:$(VERSION)
+
+push-image-s390x: $(CONFIG_DOCKER_TARGET) build-image-s390x
+	@docker push $(REGISTRY)/$(IMG)-s390x:$(VERSION)
+
+############################################################
+# multiarch-image section
+############################################################
+
+images: push-image-amd64 push-image-ppc64le push-image-s390x multiarch-image
+
+multiarch-image:
+	@curl -L -o /tmp/manifest-tool https://github.com/estesp/manifest-tool/releases/download/v1.0.0/manifest-tool-linux-amd64
+	@chmod +x /tmp/manifest-tool
+	/tmp/manifest-tool push from-args --platforms linux/amd64,linux/ppc64le,linux/s390x --template $(REGISTRY)/$(IMG)-ARCH:$(VERSION) --target $(REGISTRY)/$(IMG) --ignore-missing
+	/tmp/manifest-tool push from-args --platforms linux/amd64,linux/ppc64le,linux/s390x --template $(REGISTRY)/$(IMG)-ARCH:$(VERSION) --target $(REGISTRY)/$(IMG):$(VERSION) --ignore-missing
+
+############################################################
+# CSV section
+############################################################
+csv: ## Push CSV package to the catalog
+	@RELEASE=${CSV_VERSION} common/scripts/push-csv.sh
+
+############################################################
+# CRD section
+############################################################
+crd: ## Run the operator-sdk commands to generated code (k8s and openapi and csv)
 	@echo Updating the deep copy files with the changes in the API
 	operator-sdk generate k8s
 	@echo Updating the CRD files with the OpenAPI validations
@@ -167,67 +220,10 @@ code-gen: ## Run the operator-sdk commands to generated code (k8s and openapi an
 	@echo Updating the CSV files with the changes in the CRD
 	operator-sdk generate csv --csv-version ${CSV_VERSION} --update-crds
 
-code-dev: ## Run the default dev commands which are the go tidy, fmt, vet check the lint then execute the $ make code-gen
-	@echo Running the common required commands for developments purposes
-	- make code-tidy
-	- make code-fmt
-	- make code-vet
-	- make code-gen
-	#- make code-lint
+############################################################
+# clean section
+############################################################
+clean:
+	rm -rf build/_output
 
-run: ## Run against the configured Kubernetes cluster in ~/.kube/config
-	go run ./cmd/manager/main.go
-
-##@ Build
-
-build: ## Build go binary
-	@common/scripts/gobuild.sh build/_output/bin/$(IMG) ./cmd/manager
-
-local: code-dev ## Build local go binary, default is drawin
-	@GOOS=darwin common/scripts/gobuild.sh build/_output/bin/$(IMG) ./cmd/manager
-
-##@ Test
-
-test: ## Run unit test
-	@go test ${TESTARGS} ./pkg/...
-
-test-e2e: ## Run integration e2e tests with different options.
-	@echo ... Running the same e2e tests with different args ...
-	@echo ... Running locally ...
-	- operator-sdk test local ./test/e2e --verbose --up-local --namespace=${NAMESPACE}
-	# @echo ... Running with the param ...
-	# - operator-sdk test local ./test/e2e --namespace=${NAMESPACE}
-
-coverage: ## Run code coverage test
-	@common/scripts/codecov.sh ${BUILD_LOCALLY}
-
-##@ Release
-
-install-operator-sdk: ## Install operator sdk binary
-	@operator-sdk version 2> /dev/null ; if [ $$? -ne 0 ]; then ./common/scripts/install-operator-sdk.sh; fi
-
-ifeq ($(BUILD_LOCALLY),0)
-    export CONFIG_DOCKER_TARGET = config-docker
-endif
-images: install-operator-sdk $(CONFIG_DOCKER_TARGET) ## Build and push image
-	@operator-sdk build $(REGISTRY)/$(IMG):$(VERSION)
-	@docker tag $(REGISTRY)/$(IMG):$(VERSION) $(REGISTRY)/$(IMG)
-	@if [ $(BUILD_LOCALLY) -ne 1 ]; then docker push $(REGISTRY)/$(IMG):$(VERSION); docker push $(REGISTRY)/$(IMG); fi
-
-csv: ## Push CSV package to the catalog
-	@RELEASE=${CSV_VERSION} common/scripts/push-csv.sh
-
-all: fmt check test coverage build images
-
-##@ Cleanup
-clean: ## Clean build binary
-	rm -f build/_output/bin/$(IMG)
-
-##@ Help
-help: ## Display this help
-	@echo -e "Usage:\n  make \033[36m<target>\033[0m"
-	@awk 'BEGIN {FS = ":.*##"}; \
-		/^[a-zA-Z0-9_-]+:.*?##/ { printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2 } \
-		/^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
-
-.PHONY: all build local run check install uninstall code-vet code-fmt code-tidy code-lint code-gen code-dev test test-e2e coverage images csv install-operator-sdk clean help
+.PHONY: all work build check lint test coverage images multiarch-image

@@ -1,11 +1,28 @@
+//
+// Copyright 2020 IBM Corporation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
 package model
 
 import (
-	monitoringv1alpha1 "github.com/IBM/ibm-monitoring-exporters-operator/pkg/apis/monitoring/v1alpha1"
 	v1 "k8s.io/api/core/v1"
+
+	monitoringv1alpha1 "github.com/IBM/ibm-monitoring-exporters-operator/pkg/apis/monitoring/v1alpha1"
 )
 
-//getVolumes create volume objects for all kind of exportes
+//getVolumes create volume objects for all kind of exporters
 func getVolumes(cr *monitoringv1alpha1.Exporter, exporter ExporterKind) []v1.Volume {
 	var volumes []v1.Volume
 	routerConfigVol := v1.Volume{
@@ -64,10 +81,7 @@ func getVolumes(cr *monitoringv1alpha1.Exporter, exporter ExporterKind) []v1.Vol
 
 	}
 
-	volumes = append(volumes, routerConfigVol)
-	volumes = append(volumes, routerEntryVol)
-	volumes = append(volumes, caCertsVol)
-	volumes = append(volumes, tlsCertsVol)
+	volumes = append(volumes, routerConfigVol, routerEntryVol, caCertsVol, tlsCertsVol)
 	if exporter == NODE {
 		procVolume := v1.Volume{
 			Name: procVolName,
@@ -85,8 +99,7 @@ func getVolumes(cr *monitoringv1alpha1.Exporter, exporter ExporterKind) []v1.Vol
 				},
 			},
 		}
-		volumes = append(volumes, procVolume)
-		volumes = append(volumes, sysVolume)
+		volumes = append(volumes, procVolume, sysVolume)
 
 	}
 	return volumes

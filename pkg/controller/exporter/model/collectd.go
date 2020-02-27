@@ -1,39 +1,56 @@
+//
+// Copyright 2020 IBM Corporation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
 package model
 
 import (
-	monitoringv1alpha1 "github.com/IBM/ibm-monitoring-exporters-operator/pkg/apis/monitoring/v1alpha1"
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
+
+	monitoringv1alpha1 "github.com/IBM/ibm-monitoring-exporters-operator/pkg/apis/monitoring/v1alpha1"
 )
 
 func getCollectdLabels(cr *monitoringv1alpha1.Exporter) map[string]string {
-	lables := make(map[string]string)
-	lables["app"] = "ibm-monitoring"
-	lables["component"] = "collectdexporter"
+	labels := make(map[string]string)
+	labels[AppLabelKey] = AppLabekValue
+	labels["component"] = "collectdexporter"
 	for key, v := range cr.Labels {
-		lables[key] = v
+		labels[key] = v
 	}
-	return lables
+	return labels
 }
 
-func getCollectdServiceAnnotations(cr *monitoringv1alpha1.Exporter) map[string]string {
+func getCollectdServiceAnnotations() map[string]string {
 	annotations := make(map[string]string)
-	annotations["prometheus.io/scrape"] = "true"
-	annotations["filter.by.port.name"] = "true"
-	annotations["prometheus.io/scheme"] = "https"
+	annotations["prometheus.io/scrape"] = TrueStr
+	annotations["filter.by.port.name"] = TrueStr
+	annotations["prometheus.io/scheme"] = HTTPSStr
 	return annotations
 }
 func getCollectdServicePorts(cr *monitoringv1alpha1.Exporter) []v1.ServicePort {
 	return []v1.ServicePort{
-		v1.ServicePort{
+		{
 			Name:       "metrics",
 			Port:       cr.Spec.Collectd.MetricsPort,
 			TargetPort: intstr.IntOrString{Type: intstr.Int, IntVal: cr.Spec.Collectd.MetricsPort},
 			Protocol:   "TCP",
 		},
-		v1.ServicePort{
+		{
 			Name:       "collector",
 			Port:       cr.Spec.Collectd.CollectorPort,
 			TargetPort: intstr.IntOrString{Type: intstr.Int, IntVal: 25826},
@@ -67,11 +84,11 @@ func CollectdDeployment(cr *monitoringv1alpha1.Exporter) *appsv1.Deployment {
 				ObjectMeta: metav1.ObjectMeta{
 					Name:   GetCollectdObjName(cr),
 					Labels: getCollectdLabels(cr),
-					//TODO: it requires special privelege
+					//TODO: it requires special privilege
 					//Annotations: map[string]string{"scheduler.alpha.kubernetes.io/critical-pod": ""},
 				},
 				Spec: v1.PodSpec{
-					//TODO: it requires special privelege
+					//TODO: it requires special privilege
 					//PriorityClassName: "system-cluster-critical",
 					HostPID:     false,
 					HostIPC:     false,
@@ -172,7 +189,7 @@ func CollectdService(cr *monitoringv1alpha1.Exporter) *v1.Service {
 			Name:        GetCollectdObjName(cr),
 			Namespace:   cr.Namespace,
 			Labels:      getCollectdLabels(cr),
-			Annotations: getCollectdServiceAnnotations(cr),
+			Annotations: getCollectdServiceAnnotations(),
 		},
 		Spec: v1.ServiceSpec{
 			Ports:    getCollectdServicePorts(cr),
@@ -186,7 +203,7 @@ func CollectdService(cr *monitoringv1alpha1.Exporter) *v1.Service {
 func UpdatedCollectdService(cr *monitoringv1alpha1.Exporter, currService *v1.Service) *v1.Service {
 	newService := currService.DeepCopy()
 	newService.Labels = getCollectdLabels(cr)
-	newService.Annotations = getCollectdServiceAnnotations(cr)
+	newService.Annotations = getCollectdServiceAnnotations()
 	newService.Spec.Ports = getCollectdServicePorts(cr)
 	newService.Spec.Selector = getCollectdLabels(cr)
 	return newService
