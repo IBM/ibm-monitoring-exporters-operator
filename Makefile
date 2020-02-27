@@ -210,15 +210,27 @@ csv: ## Push CSV package to the catalog
 	@RELEASE=${CSV_VERSION} common/scripts/push-csv.sh
 
 ############################################################
-# CRD section
+# For dev section
 ############################################################
-crd: ## Run the operator-sdk commands to generated code (k8s and openapi and csv)
+code-vet: ## Run go vet for this project. More info: https://golang.org/cmd/vet/
+	@echo go vet
+	go vet $$(go list ./... )
+
+code-fmt: ## Run go fmt for this project
+	@echo go fmt
+	go fmt $$(go list ./... )
+
+code-tidy: ## Run go mod tidy to update dependencies
+	@echo go mod tidy
+	go mod tidy -v
+code-gen: ## Run the operator-sdk commands to generated code (k8s and openapi and csv)
 	@echo Updating the deep copy files with the changes in the API
 	operator-sdk generate k8s
 	@echo Updating the CRD files with the OpenAPI validations
 	operator-sdk generate openapi
 	@echo Updating the CSV files with the changes in the CRD
 	operator-sdk generate csv --csv-version ${CSV_VERSION} --update-crds
+dev: clean code-tidy code-fmt code-vet code-gen local
 
 ############################################################
 # clean section
