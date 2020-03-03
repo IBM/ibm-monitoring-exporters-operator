@@ -100,6 +100,8 @@ func NodeExporterDaemonset(cr *monitoringv1alpha1.Exporter) *appsv1.DaemonSet {
 	}
 	if len(cr.Spec.NodeExporter.ServiceAccount) != 0 {
 		daemonset.Spec.Template.Spec.ServiceAccountName = cr.Spec.NodeExporter.ServiceAccount
+	} else {
+		daemonset.Spec.Template.Spec.ServiceAccountName = DefaultNodeExporterSA
 	}
 	return daemonset
 
@@ -126,6 +128,8 @@ func UpdatedNodeExporterDeamonset(cr *monitoringv1alpha1.Exporter, currDaemonset
 	}
 	if len(cr.Spec.NodeExporter.ServiceAccount) != 0 {
 		newDaemonset.Spec.Template.Spec.ServiceAccountName = cr.Spec.NodeExporter.ServiceAccount
+	} else {
+		newDaemonset.Spec.Template.Spec.ServiceAccountName = DefaultNodeExporterSA
 	}
 	return newDaemonset
 

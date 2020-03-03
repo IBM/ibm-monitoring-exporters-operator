@@ -95,6 +95,8 @@ func KubeStateDeployment(cr *monitoringv1alpha1.Exporter) *appsv1.Deployment {
 	}
 	if len(cr.Spec.KubeStateMetrics.ServiceAccount) != 0 {
 		deployment.Spec.Template.Spec.ServiceAccountName = cr.Spec.KubeStateMetrics.ServiceAccount
+	} else {
+		deployment.Spec.Template.Spec.ServiceAccountName = DefaultExporterSA
 	}
 	return deployment
 }
@@ -120,6 +122,8 @@ func UpdatedKubeStateDeployment(cr *monitoringv1alpha1.Exporter, currDeployment 
 	}
 	if len(cr.Spec.KubeStateMetrics.ServiceAccount) != 0 {
 		newDeployment.Spec.Template.Spec.ServiceAccountName = cr.Spec.KubeStateMetrics.ServiceAccount
+	} else {
+		newDeployment.Spec.Template.Spec.ServiceAccountName = DefaultExporterSA
 	}
 	return newDeployment
 

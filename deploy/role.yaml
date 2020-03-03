@@ -7,37 +7,25 @@ rules:
 - apiGroups:
   - ""
   resources:
-  - pods
   - services
-  - services/finalizers
-  - endpoints
-  - persistentvolumeclaims
-  - events
   - configmaps
+  verbs:
+  - '*'
+- apiGroups:
+  - ""
+  resources:
   - secrets
   verbs:
-  - create
-  - delete
   - get
   - list
-  - patch
-  - update
   - watch
 - apiGroups:
   - apps
   resources:
   - deployments
   - daemonsets
-  - replicasets
-  - statefulsets
   verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
+  - '*'
 - apiGroups:
   - monitoring.coreos.com
   resources:
@@ -46,56 +34,31 @@ rules:
   - get
   - create
 - apiGroups:
-  - apps
-  resourceNames:
-  - ibm-monitoring-exporters-operator
-  resources:
-  - deployments/finalizers
-  verbs:
-  - update
-- apiGroups:
-  - ""
-  resources:
-  - pods
-  verbs:
-  - get
-- apiGroups:
-  - apps
-  resources:
-  - replicasets
-  - deployments
-  verbs:
-  - get
-- apiGroups:
   - monitoring.operator.ibm.com
   resources:
+  - exporters
+  - exporters/finalizers
+  verbs:
   - '*'
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - security.openshift.io
-  resourceNames:
-  - anyuid
-  resources:
-  - securitycontextconstraints
-  verbs:
-  - use
 - apiGroups:
   - certmanager.k8s.io
   resources:
   - certificates
   - issuers
   verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
+  - '*'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  creationTimestamp: null
+  name: ibm-monitoring-exporter
+rules:
+- apiGroups:
+  - security.openshift.io
+  resourceNames:
+  - privileged
+  resources:
+  - securitycontextconstraints
+  verbs:
+  - use

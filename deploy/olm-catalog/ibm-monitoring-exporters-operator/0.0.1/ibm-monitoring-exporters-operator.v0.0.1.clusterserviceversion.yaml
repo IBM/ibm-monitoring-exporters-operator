@@ -8,7 +8,7 @@ metadata:
           "apiVersion": "monitoring.operator.ibm.com/v1alpha1",
           "kind": "Exporter",
           "metadata": {
-            "name": "ibm-monitoring-exporter"
+            "name": "ibm-monitoring"
           },
           "spec": {
             "certs": {
@@ -20,7 +20,7 @@ metadata:
             "collectd": {
               "collectorPort": 25826,
               "enable": true,
-              "image": "",
+              "image": "hyc-cloud-private-edge-docker-local.artifactory.swg-devops.com/ibmcom-amd64/collectd-exporter:v0.4.0-build.3",
               "metricsPort": 8443,
               "resource": {},
               "routerResource": {
@@ -32,27 +32,24 @@ metadata:
                   "cpu": "10m",
                   "memory": "64Mi"
                 }
-              },
-              "serviceAccount": "collectd"
+              }
             },
             "imagePullSecrets": [
               "infra-registry-key"
             ],
             "kubeStateMetrics": {
               "enable": true,
-              "image": "",
-              "port": 8443,
-              "serviceAccount": "kube-state-metrics"
+              "image": "hyc-cloud-private-edge-docker-local.artifactory.swg-devops.com/ibmcom-amd64/kube-state-metrics:v1.9.4-build.1",
+              "port": 8443
             },
             "nodeExporter": {
               "enable": true,
               "healtyPort": 8556,
               "hostPort": 9109,
-              "image": "",
-              "serviceAccount": "node-exporter",
+              "image": "hyc-cloud-private-edge-docker-local.artifactory.swg-devops.com/ibmcom-amd64/node-exporter:v0.18.1-build.1",
               "servicePort": 8555
             },
-            "routerImage": ""
+            "routerImage": "hyc-cloud-private-edge-docker-local.artifactory.swg-devops.com/ibmcom-amd64/icp-management-ingress:2.5.0"
           }
         }
       ]
@@ -106,39 +103,37 @@ spec:
       permissions:
       - rules:
         - apiGroups:
+          - security.openshift.io
+          resourceNames:
+          - privileged
+          resources:
+          - securitycontextconstraints
+          verbs:
+          - use
+        serviceAccountName: ibm-monitoring-exporter
+      - rules:
+        - apiGroups:
           - ""
           resources:
-          - pods
           - services
-          - services/finalizers
-          - endpoints
-          - persistentvolumeclaims
-          - events
           - configmaps
+          verbs:
+          - '*'
+        - apiGroups:
+          - ""
+          resources:
           - secrets
           verbs:
-          - create
-          - delete
           - get
           - list
-          - patch
-          - update
           - watch
         - apiGroups:
           - apps
           resources:
           - deployments
           - daemonsets
-          - replicasets
-          - statefulsets
           verbs:
-          - create
-          - delete
-          - get
-          - list
-          - patch
-          - update
-          - watch
+          - '*'
         - apiGroups:
           - monitoring.coreos.com
           resources:
@@ -147,59 +142,19 @@ spec:
           - get
           - create
         - apiGroups:
-          - apps
-          resourceNames:
-          - ibm-monitoring-exporters-operator
-          resources:
-          - deployments/finalizers
-          verbs:
-          - update
-        - apiGroups:
-          - ""
-          resources:
-          - pods
-          verbs:
-          - get
-        - apiGroups:
-          - apps
-          resources:
-          - replicasets
-          - deployments
-          verbs:
-          - get
-        - apiGroups:
           - monitoring.operator.ibm.com
           resources:
+          - exporters
+          - exporters/finalizers
+          verbs:
           - '*'
-          verbs:
-          - create
-          - delete
-          - get
-          - list
-          - patch
-          - update
-          - watch
-        - apiGroups:
-          - security.openshift.io
-          resourceNames:
-          - anyuid
-          resources:
-          - securitycontextconstraints
-          verbs:
-          - use
         - apiGroups:
           - certmanager.k8s.io
           resources:
           - certificates
           - issuers
           verbs:
-          - create
-          - delete
-          - get
-          - list
-          - patch
-          - update
-          - watch
+          - '*'
         serviceAccountName: ibm-monitoring-exporters-operator
     strategy: deployment
   installModes:

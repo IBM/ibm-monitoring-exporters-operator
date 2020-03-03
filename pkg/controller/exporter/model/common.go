@@ -59,6 +59,11 @@ const (
 	//HTTPSStr string of https
 	HTTPSStr = "https"
 
+	//DefaultNodeExporterSA is default sa for node exporter
+	DefaultNodeExporterSA = "ibm-monitoring-exporter"
+	//DefaultExporterSA is default sa for other exporters
+	DefaultExporterSA = "ibm-monitoring-exporter"
+
 	routerConfigVolName = "router-config"
 	routerEntryVolName  = "router-entry"
 	caCertsVolName      = "monitoring-ca-certs"
