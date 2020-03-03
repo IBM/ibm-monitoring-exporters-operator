@@ -55,17 +55,24 @@ metadata:
       ]
     capabilities: Basic Install
   name: ibm-monitoring-exporters-operator.v0.0.1
-  namespace: placeholder
+  namespace: ibm-common-services
 spec:
   apiservicedefinitions: {}
   customresourcedefinitions:
     owned:
-    - description: Exporter is the Schema for the exporters API
+    - description: Exporter defines information for collectd exporter, node-exporter and kube-state-matrics
       kind: Exporter
       name: exporters.monitoring.operator.ibm.com
       version: v1alpha1
-  description: Placeholder description
-  displayName: Ibm Monitoring Exporters Operator
+      displayName: IBM Monitoring Exporter
+    required:
+    - description: Certificate is a type to represent a Certificate from ACME
+      kind: Certificate
+      name: certmanager.k8s.io
+      version: v1alpha1
+      displayName: Cert Manager Certificate
+  description: IBM Monitoring Exporters Operator provisions node-exporter, kube-state-metrics and collectd exporter with tls enabled
+  displayName: IBM Monitoring Exporters Operator
   install:
     spec:
       deployments:
@@ -95,7 +102,7 @@ spec:
                       fieldPath: metadata.name
                 - name: OPERATOR_NAME
                   value: ibm-monitoring-exporters-operator
-                image: REPLACE_IMAGE
+                image: quay.io/opencloudio/ibm-monitoring-exporters-operator-amd64:09759280
                 imagePullPolicy: Always
                 name: ibm-monitoring-exporters-operator
                 resources: {}
