@@ -9,6 +9,7 @@ rules:
   resources:
   - services
   - configmaps
+  - pods
   verbs:
   - '*'
 - apiGroups:

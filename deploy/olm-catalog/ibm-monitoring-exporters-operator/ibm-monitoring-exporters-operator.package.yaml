@@ -2,4 +2,4 @@ channels:
 - currentCSV: ibm-monitoring-exporters-operator.v0.0.1
   name: alpha
 defaultChannel: alpha
-packageName: ibm-monitoring-exporters-operator
+packageName: ibm-monitoring-exporters-operator-app
