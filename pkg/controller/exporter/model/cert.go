@@ -38,7 +38,7 @@ func CertManagerCert(cr *monitoringv1alpha1.Exporter) *cmv1alpha1.Certificate {
 			SecretName: cr.Spec.Certs.ExporterSecret,
 			IssuerRef: cmv1alpha1.ObjectReference{
 				Name: cr.Spec.Certs.Issuer,
-				Kind: cmv1alpha1.IssuerKind,
+				Kind: cmv1alpha1.ClusterIssuerKind,
 			},
 			CommonName: AppLabekValue,
 			DNSNames:   []string{"*." + cr.Namespace + ".pod"},

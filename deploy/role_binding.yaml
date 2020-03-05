@@ -1,12 +1,13 @@
-kind: RoleBinding
+kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: ibm-monitoring-exporters-operator
 subjects:
 - kind: ServiceAccount
   name: ibm-monitoring-exporters-operator
+  namespace: ibm-common-services
 roleRef:
-  kind: Role
+  kind: ClusterRole
   name: ibm-monitoring-exporters-operator
   apiGroup: rbac.authorization.k8s.io
 ---

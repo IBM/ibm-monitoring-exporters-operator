@@ -1,5 +1,5 @@
 apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+kind: ClusterRole
 metadata:
   creationTimestamp: null
   name: ibm-monitoring-exporters-operator
@@ -45,9 +45,14 @@ rules:
   - certmanager.k8s.io
   resources:
   - certificates
-  - issuers
   verbs:
   - '*'
+- apiGroups:
+  - certmanager.k8s.io
+  resources:
+  - clusterissuers
+  verbs:
+  - use
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role

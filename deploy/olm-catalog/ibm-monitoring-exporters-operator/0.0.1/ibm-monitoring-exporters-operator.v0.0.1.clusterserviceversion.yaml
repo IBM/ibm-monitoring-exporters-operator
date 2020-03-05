@@ -12,9 +12,8 @@ metadata:
           },
           "spec": {
             "certs": {
-              "caSecret": "cluster-ca-cert",
               "exporterSecret": "ibm-monitoring-exporter-certs",
-              "issuer": "icp-ca-issuer",
+              "issuer": "cs-ca-issuer",
               "monitoringClientSecret": "ibm-monitoring-client-certs"
             },
             "collectd": {
@@ -65,16 +64,62 @@ spec:
       name: exporters.monitoring.operator.ibm.com
       version: v1alpha1
       displayName: IBM Monitoring Exporter
-    required:
-    - description: CertManager is the Schema for the certmanagers API
-      kind: CertManager
-      name: certmanagers.operator.ibm.com
-      version: v1alpha1
-      displayName: CertManager
   description: IBM Monitoring Exporters Operator provisions node-exporter, kube-state-metrics and collectd exporter with tls enabled
   displayName: IBM Monitoring Exporters Operator
   install:
     spec:
+      clusterPermissions:
+      - rules:
+        - apiGroups:
+          - ""
+          resources:
+          - services
+          - configmaps
+          - pods
+          verbs:
+          - '*'
+        - apiGroups:
+          - ""
+          resources:
+          - secrets
+          verbs:
+          - get
+          - list
+          - watch
+        - apiGroups:
+          - apps
+          resources:
+          - deployments
+          - daemonsets
+          verbs:
+          - '*'
+        - apiGroups:
+          - monitoring.coreos.com
+          resources:
+          - servicemonitors
+          verbs:
+          - get
+          - create
+        - apiGroups:
+          - monitoring.operator.ibm.com
+          resources:
+          - exporters
+          - exporters/finalizers
+          verbs:
+          - '*'
+        - apiGroups:
+          - certmanager.k8s.io
+          resources:
+          - certificates
+          verbs:
+          - '*'
+         - apiGroups:
+          - certmanager.k8s.io
+          resources:
+          - clusterissuers
+          verbs:
+          - use
+        serviceAccountName: ibm-monitoring-exporters-operator
       deployments:
       - name: ibm-monitoring-exporters-operator
         spec:
@@ -118,52 +163,6 @@ spec:
           verbs:
           - use
         serviceAccountName: ibm-monitoring-exporter
-      - rules:
-        - apiGroups:
-          - ""
-          resources:
-          - services
-          - configmaps
-          - pods
-          verbs:
-          - '*'
-        - apiGroups:
-          - ""
-          resources:
-          - secrets
-          verbs:
-          - get
-          - list
-          - watch
-        - apiGroups:
-          - apps
-          resources:
-          - deployments
-          - daemonsets
-          verbs:
-          - '*'
-        - apiGroups:
-          - monitoring.coreos.com
-          resources:
-          - servicemonitors
-          verbs:
-          - get
-          - create
-        - apiGroups:
-          - monitoring.operator.ibm.com
-          resources:
-          - exporters
-          - exporters/finalizers
-          verbs:
-          - '*'
-        - apiGroups:
-          - certmanager.k8s.io
-          resources:
-          - certificates
-          - issuers
-          verbs:
-          - '*'
-        serviceAccountName: ibm-monitoring-exporters-operator
     strategy: deployment
   installModes:
   - supported: true

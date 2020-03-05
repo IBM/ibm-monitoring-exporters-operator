@@ -112,7 +112,7 @@ http {
 		listen {{.ListenPort}} ssl default_server;
 		ssl_certificate server.crt;
 		ssl_certificate_key server.key;
-		ssl_client_certificate /opt/ibm/router/caCerts/tls.crt;
+		ssl_client_certificate /opt/ibm/router/caCerts/ca.crt;
 		ssl_verify_client on;
 		ssl_protocols TLSv1.2;
 		# Ref: https://github.com/cloudflare/sslconfig/blob/master/conf
@@ -139,7 +139,7 @@ http {
 		listen {{.HealthyPort}} ssl default_server;
 		ssl_certificate server.crt;
 		ssl_certificate_key server.key;
-		ssl_client_certificate /opt/ibm/router/caCerts/tls.crt;
+		ssl_client_certificate /opt/ibm/router/caCerts/ca.crt;
 		ssl_verify_client off;
 		ssl_protocols TLSv1.2;
 		# Ref: https://github.com/cloudflare/sslconfig/blob/master/conf

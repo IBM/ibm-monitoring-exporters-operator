@@ -19,7 +19,6 @@ package handler
 import (
 	"context"
 
-	v12 "k8s.io/api/core/v1"
 	kerrors "k8s.io/apimachinery/pkg/api/errors"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -44,14 +43,7 @@ type Handler struct {
 
 // Sync is entry point of Handler and makes cluster status as expected
 func (h *Handler) Sync() error {
-	//TODO: cert generation should be based on cert manager
-	//and ca cert should be the ca.crt inside the generated seceret by cert issuer
-	//so those cert related code need to be rewriten after cert manager go module confliction issue being resolved
 	if err := h.syncCertSecret(); err != nil {
-		return err
-	}
-
-	if err := h.checkCASecret(); err != nil {
 		return err
 	}
 
@@ -106,17 +98,6 @@ func (h *Handler) syncRouterConfigmap() error {
 			log.Error(err, "Failed to delete router configmap and ignore it")
 		}
 		return nil
-	}
-	return nil
-}
-
-func (h *Handler) checkCASecret() error {
-	//TODO: should go back here when decision about shared secret being made
-	key := client.ObjectKey{Namespace: h.CR.Namespace, Name: h.CR.Spec.Certs.CASecret}
-	secret := &v12.Secret{}
-	if err := h.Client.Get(h.Context, key, secret); err != nil {
-		log.Error(err, "CA Secret does not exist")
-		return runtime.ErrInvalidLengthGenerated
 	}
 	return nil
 }

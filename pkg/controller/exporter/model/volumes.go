@@ -50,7 +50,7 @@ func getVolumes(cr *monitoringv1alpha1.Exporter, exporter ExporterKind) []v1.Vol
 		Name: caCertsVolName,
 		VolumeSource: v1.VolumeSource{
 			Secret: &v1.SecretVolumeSource{
-				SecretName: cr.Spec.Certs.CASecret,
+				SecretName: cr.Spec.Certs.ExporterSecret,
 			},
 		},
 	}
