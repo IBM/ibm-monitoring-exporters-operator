@@ -113,7 +113,7 @@ spec:
           - certificates
           verbs:
           - '*'
-         - apiGroups:
+        - apiGroups:
           - certmanager.k8s.io
           resources:
           - clusterissuers
