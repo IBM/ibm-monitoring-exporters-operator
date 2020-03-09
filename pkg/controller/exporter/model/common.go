@@ -48,6 +48,11 @@ func IsRequeueErr(e error) bool {
 	}
 	return false
 }
+func meteringAnnotationns() map[string]string {
+	return map[string]string{
+		"clusterhealth.ibm.com/dependencies": "cert-manager",
+	}
+}
 
 const (
 	//AppLabelKey is key of label
@@ -58,6 +63,15 @@ const (
 	TrueStr = "true"
 	//HTTPSStr string of https
 	HTTPSStr = "https"
+
+	//MeteringLabelKey lable key for metering check
+	MeteringLabelKey = "app.kubernetes.io/instance"
+	//MetringLabelValue label value for metering check
+	MetringLabelValue = "monitoring"
+	//MeteringAnnlKey annotation key for metering check
+	MeteringAnnlKey = "clusterhealth.ibm.com/dependencies"
+	//MetringAnnValue annotation value for metering check
+	MetringAnnValue = "cert-manager"
 
 	//DefaultNodeExporterSA is default sa for node exporter
 	DefaultNodeExporterSA = "ibm-monitoring-exporter"

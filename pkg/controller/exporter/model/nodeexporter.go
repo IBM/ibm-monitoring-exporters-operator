@@ -73,8 +73,9 @@ func NodeExporterDaemonset(cr *monitoringv1alpha1.Exporter) *appsv1.DaemonSet {
 			MinReadySeconds: 5,
 			Template: v1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:   GetNodeExporterObjName(cr),
-					Labels: getNodeExporterLabels(cr),
+					Name:        GetNodeExporterObjName(cr),
+					Labels:      getNodeExporterLabels(cr),
+					Annotations: meteringAnnotationns(),
 					//TODO: it requires special privilege
 					//Annotations: map[string]string{"scheduler.alpha.kubernetes.io/critical-pod": ""},
 				},
@@ -116,6 +117,7 @@ func UpdatedNodeExporterDeamonset(cr *monitoringv1alpha1.Exporter, currDaemonset
 		MatchLabels: getNodeExporterLabels(cr),
 	}
 	newDaemonset.Spec.Template.ObjectMeta.Labels = getNodeExporterLabels(cr)
+	newDaemonset.Spec.Template.ObjectMeta.Annotations = meteringAnnotationns()
 	newDaemonset.Spec.Template.Spec.Containers = containers
 	newDaemonset.Spec.Template.Spec.Volumes = getVolumes(cr, NODE)
 	if cr.Spec.ImagePullSecrets != nil && len(cr.Spec.ImagePullSecrets) != 0 {
@@ -180,13 +182,14 @@ func GetNodeExporterObjName(cr *monitoringv1alpha1.Exporter) string {
 }
 
 func getNodeExporterLabels(cr *monitoringv1alpha1.Exporter) map[string]string {
-	lables := make(map[string]string)
-	lables[AppLabelKey] = AppLabekValue
-	lables["component"] = "nodeexporter"
+	labels := make(map[string]string)
+	labels[AppLabelKey] = AppLabekValue
+	labels["component"] = "nodeexporter"
+	labels[MeteringLabelKey] = MetringLabelValue
 	for key, v := range cr.Labels {
-		lables[key] = v
+		labels[key] = v
 	}
-	return lables
+	return labels
 }
 
 func getNodeExporterAnnotations() map[string]string {

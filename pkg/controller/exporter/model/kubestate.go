@@ -68,8 +68,9 @@ func KubeStateDeployment(cr *monitoringv1alpha1.Exporter) *appsv1.Deployment {
 			Replicas: &replicas,
 			Template: v1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:   GetKubeStateObjName(cr),
-					Labels: getKubeStateLabels(cr),
+					Name:        GetKubeStateObjName(cr),
+					Labels:      getKubeStateLabels(cr),
+					Annotations: meteringAnnotationns(),
 					//TODO: it requires special privilege
 					//Annotations: map[string]string{"scheduler.alpha.kubernetes.io/critical-pod": ""},
 				},
@@ -110,6 +111,7 @@ func UpdatedKubeStateDeployment(cr *monitoringv1alpha1.Exporter, currDeployment 
 		MatchLabels: getKubeStateLabels(cr),
 	}
 	newDeployment.Spec.Template.ObjectMeta.Labels = getKubeStateLabels(cr)
+	newDeployment.Spec.Template.ObjectMeta.Annotations = meteringAnnotationns()
 	newDeployment.Spec.Template.Spec.Containers = containers
 	newDeployment.Spec.Template.Spec.Volumes = getVolumes(cr, KUBE)
 	if cr.Spec.ImagePullSecrets != nil && len(cr.Spec.ImagePullSecrets) != 0 {
@@ -192,6 +194,7 @@ func getKubeStateLabels(cr *monitoringv1alpha1.Exporter) map[string]string {
 	labels := make(map[string]string)
 	labels[AppLabelKey] = AppLabekValue
 	labels["component"] = "kube-state-metrics"
+	labels[MeteringLabelKey] = MetringLabelValue
 	for key, v := range cr.Labels {
 		labels[key] = v
 	}
