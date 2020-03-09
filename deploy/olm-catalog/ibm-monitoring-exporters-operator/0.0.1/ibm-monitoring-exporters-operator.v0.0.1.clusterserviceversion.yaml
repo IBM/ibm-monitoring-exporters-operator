@@ -13,7 +13,7 @@ metadata:
           "spec": {
             "certs": {
               "exporterSecret": "ibm-monitoring-exporter-certs",
-              "issuer": "cs-ca-issuer",
+              "issuer": "cs-ca-clusterissuer",
               "monitoringClientSecret": "ibm-monitoring-client-certs"
             },
             "collectd": {

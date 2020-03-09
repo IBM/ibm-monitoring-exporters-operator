@@ -5,7 +5,7 @@ metadata:
 spec:
   routerImage: "hyc-cloud-private-edge-docker-local.artifactory.swg-devops.com/ibmcom-amd64/icp-management-ingress:2.5.0"
   certs:
-    issuer: "cs-ca-issuer"
+    issuer: "cs-ca-clusterissuer"
     exporterSecret: "ibm-monitoring-exporter-certs"
     monitoringClientSecret: "ibm-monitoring-client-certs"
   imagePullSecrets:
