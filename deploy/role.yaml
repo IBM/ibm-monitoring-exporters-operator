@@ -12,16 +12,9 @@ rules:
   - pods
   - endpoints
   - events
-  verbs:
-  - '*'
-- apiGroups:
-  - ""
-  resources:
   - secrets
   verbs:
-  - get
-  - list
-  - watch
+  - '*'
 - apiGroups:
   - apps
   resources:

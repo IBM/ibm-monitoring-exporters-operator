@@ -77,21 +77,17 @@ spec:
           - services
           - configmaps
           - pods
+          - secrets
+          - endpoints
+          - events
           verbs:
           - '*'
-        - apiGroups:
-          - ""
-          resources:
-          - secrets
-          verbs:
-          - get
-          - list
-          - watch
         - apiGroups:
           - apps
           resources:
           - deployments
           - daemonsets
+          - replicasets
           verbs:
           - '*'
         - apiGroups:
