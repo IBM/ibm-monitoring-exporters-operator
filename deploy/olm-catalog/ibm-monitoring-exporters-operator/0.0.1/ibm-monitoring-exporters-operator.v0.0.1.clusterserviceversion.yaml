@@ -49,7 +49,7 @@ metadata:
               "image": "hyc-cloud-private-edge-docker-local.artifactory.swg-devops.com/ibmcom-amd64/node-exporter:v0.18.1-build.1",
               "servicePort": 8555
             },
-            "routerImage": "hyc-cloud-private-edge-docker-local.artifactory.swg-devops.com/ibmcom-amd64/icp-management-ingress:2.5.0"
+            "routerImage": "hyc-cloud-private-edge-docker-local.artifactory.swg-devops.com/ibmcom-amd64/icp-management-ingress:2.5.1"
           }
         }
       ]
