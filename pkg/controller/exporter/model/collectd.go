@@ -29,7 +29,7 @@ func getCollectdLabels(cr *monitoringv1alpha1.Exporter) map[string]string {
 	labels := make(map[string]string)
 	labels[AppLabelKey] = AppLabekValue
 	labels["component"] = "collectdexporter"
-	labels[MeteringLabelKey] = MetringLabelValue
+	labels[HealthCheckLabelKey] = HealthCheckLabelValue
 	for key, v := range cr.Labels {
 		labels[key] = v
 	}
@@ -85,7 +85,7 @@ func CollectdDeployment(cr *monitoringv1alpha1.Exporter) *appsv1.Deployment {
 				ObjectMeta: metav1.ObjectMeta{
 					Name:        GetCollectdObjName(cr),
 					Labels:      getCollectdLabels(cr),
-					Annotations: meteringAnnotationns(),
+					Annotations: commonAnnotationns(),
 					//TODO: it requires special privilege
 					//Annotations: map[string]string{"scheduler.alpha.kubernetes.io/critical-pod": ""},
 				},
@@ -169,7 +169,7 @@ func UpdatedCollectdDeployment(cr *monitoringv1alpha1.Exporter, currDeployment *
 	newDeployment.ObjectMeta.Labels = getCollectdLabels(cr)
 	newDeployment.Spec.Selector = &metav1.LabelSelector{MatchLabels: getCollectdLabels(cr)}
 	newDeployment.Spec.Template.ObjectMeta.Labels = getCollectdLabels(cr)
-	newDeployment.Spec.Template.ObjectMeta.Annotations = meteringAnnotationns()
+	newDeployment.Spec.Template.ObjectMeta.Annotations = commonAnnotationns()
 	newDeployment.Spec.Template.Spec.Containers = containers
 	newDeployment.Spec.Template.Spec.Volumes = getVolumes(cr, COLLECTD)
 

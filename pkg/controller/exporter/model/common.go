@@ -48,9 +48,13 @@ func IsRequeueErr(e error) bool {
 	}
 	return false
 }
-func meteringAnnotationns() map[string]string {
+func commonAnnotationns() map[string]string {
 	return map[string]string{
 		"clusterhealth.ibm.com/dependencies": "cert-manager",
+		"productName":                        "IBM Cloud Platform Common Services",
+		"productID":                          "068a62892a1e4db39641342e592daa25",
+		"productVersion":                     "3.3.0",
+		"productMetric":                      "FREE",
 	}
 }
 
@@ -64,14 +68,10 @@ const (
 	//HTTPSStr string of https
 	HTTPSStr = "https"
 
-	//MeteringLabelKey lable key for metering check
-	MeteringLabelKey = "app.kubernetes.io/instance"
-	//MetringLabelValue label value for metering check
-	MetringLabelValue = "common-monitoring"
-	//MeteringAnnlKey annotation key for metering check
-	MeteringAnnlKey = "clusterhealth.ibm.com/dependencies"
-	//MetringAnnValue annotation value for metering check
-	MetringAnnValue = "cert-manager"
+	//HealthCheckLabelKey lable key for metering check
+	HealthCheckLabelKey = "app.kubernetes.io/instance"
+	//HealthCheckLabelValue label value for metering check
+	HealthCheckLabelValue = "common-monitoring"
 
 	//DefaultNodeExporterSA is default sa for node exporter
 	DefaultNodeExporterSA = "ibm-monitoring-exporter"
