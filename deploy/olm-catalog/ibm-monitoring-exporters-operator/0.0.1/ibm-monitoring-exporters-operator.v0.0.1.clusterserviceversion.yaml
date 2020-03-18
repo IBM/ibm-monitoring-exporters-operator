@@ -74,6 +74,52 @@ spec:
         - apiGroups:
           - ""
           resources:
+          - '*'
+          verbs:
+          - list
+        - apiGroups:
+          - apps
+          resources:
+          - '*'
+          verbs:
+          - list
+        - apiGroups:
+          - batch
+          resources:
+          - '*'
+          verbs:
+          - list
+        - apiGroups:
+          - extensions
+          resources:
+          - '*'
+          verbs:
+          - list
+        - apiGroups:
+          - networking.k8s.io
+          resources:
+          - '*'
+          verbs:
+          - list
+        - apiGroups:
+          - storage.k8s.io
+          resources:
+          - '*'
+          verbs:
+          - list
+        - apiGroups:
+          - security.openshift.io
+          resourceNames:
+          - privileged
+          resources:
+          - securitycontextconstraints
+          verbs:
+          - use
+        serviceAccountName: ibm-monitoring-exporter
+      - rules:
+        - apiGroups:
+          - ""
+          resources:
           - services
           - configmaps
           - pods
@@ -149,17 +195,6 @@ spec:
                 name: ibm-monitoring-exporters-operator
                 resources: {}
               serviceAccountName: ibm-monitoring-exporters-operator
-      permissions:
-      - rules:
-        - apiGroups:
-          - security.openshift.io
-          resourceNames:
-          - privileged
-          resources:
-          - securitycontextconstraints
-          verbs:
-          - use
-        serviceAccountName: ibm-monitoring-exporter
     strategy: deployment
   installModes:
   - supported: true
