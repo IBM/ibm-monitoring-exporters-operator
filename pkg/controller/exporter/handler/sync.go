@@ -43,6 +43,10 @@ type Handler struct {
 
 // Sync is entry point of Handler and makes cluster status as expected
 func (h *Handler) Sync() error {
+	if err := h.updateStatus(); err != nil {
+		return err
+	}
+
 	if err := h.syncCertSecret(); err != nil {
 		return err
 	}
@@ -61,6 +65,39 @@ func (h *Handler) Sync() error {
 	}
 	return nil
 
+}
+func (h *Handler) updateStatus() error {
+	//cert
+	if h.CurrentState.CertSecret != nil {
+		h.CR.Status.Cert = model.Ready
+	} else {
+		h.CR.Status.Cert = model.NotReady
+	}
+	//router configmap
+	if h.CurrentState.RouterConfig != nil {
+		h.CR.Status.RouterConfigMap = model.Ready
+	} else {
+		h.CR.Status.RouterConfigMap = model.NotReady
+	}
+	//collectd
+	if h.CurrentState.CollectdState.Deployment != nil {
+		h.CR.Status.Collectd = h.CurrentState.CollectdState.Deployment.Status
+	}
+
+	//nodeexporter
+	if h.CurrentState.NodeExporterState.DeamonSet != nil {
+		h.CR.Status.NodeExporter = h.CurrentState.NodeExporterState.DeamonSet.Status
+	}
+	//kube-state
+	if h.CurrentState.KubeStateMetricsState.Deployment != nil {
+		h.CR.Status.KubeState = h.CurrentState.CollectdState.Deployment.Status
+	}
+
+	if err := h.Client.Status().Update(h.Context, h.CR); err != nil {
+		log.Error(err, "Failed to update status")
+
+	}
+	return nil
 }
 func (h *Handler) syncRouterConfigmap() error {
 	if h.CurrentState.RouterConfig == nil && !h.CR.Spec.Collectd.Enable {

@@ -17,6 +17,7 @@
 package v1alpha1
 
 import (
+	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -85,6 +86,11 @@ type ExporterStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "operator-sdk generate k8s" to regenerate code after modifying this file
 	// Add custom validation using kubebuilder tags: https://book-v1.book.kubebuilder.io/beyond_basics/generating_crd.html
+	Cert            string                  `json:"cert,omitempty"`
+	RouterConfigMap string                  `json:"routerConfigmap,omitempty"`
+	Collectd        appsv1.DeploymentStatus `json:"collectd,omitempty"`
+	NodeExporter    appsv1.DaemonSetStatus  `json:"nodeExporter,omitempty"`
+	KubeState       appsv1.DeploymentStatus `json:"kubeState,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

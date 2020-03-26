@@ -59,6 +59,10 @@ func commonAnnotationns() map[string]string {
 }
 
 const (
+	//Ready is a const string
+	Ready = "Ready"
+	//NotReady is a const string
+	NotReady = "NotReady"
 	//AppLabelKey is key of label
 	AppLabelKey = "cs/app"
 	//AppLabekValue is value of label
