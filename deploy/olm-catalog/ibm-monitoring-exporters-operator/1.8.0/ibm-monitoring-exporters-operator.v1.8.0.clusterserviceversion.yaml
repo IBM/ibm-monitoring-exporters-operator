@@ -154,6 +154,7 @@ spec:
           resources:
           - exporters
           - exporters/finalizers
+          - exporters/status
           verbs:
           - '*'
         - apiGroups:
