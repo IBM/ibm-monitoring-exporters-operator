@@ -24,13 +24,27 @@ import (
 
 // ExporterSpec defines the desired state of Exporter
 type ExporterSpec struct {
-	Certs            Certs            `json:"certs,omitempty"`
-	Collectd         Collectd         `json:"collectd,omitempty"`
-	NodeExporter     NodeExporter     `json:"nodeExporter,omitempty"`
+	//Configurations for tls certifications
+	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
+	Certs Certs `json:"certs,omitempty"`
+	//Configurations for collectd deployment
+	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
+	Collectd Collectd `json:"collectd,omitempty"`
+	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
+	//Configurations for node-exporter daemonset
+	NodeExporter NodeExporter `json:"nodeExporter,omitempty"`
+	//Configurations for kube-state-metrics deployment
+	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
 	KubeStateMetrics KubeStateMetrics `json:"kubeStateMetrics,omitempty"`
-	ImagePolicy      v1.PullPolicy    `json:"imagePolicy,omitempty"`
-	ImagePullSecrets []string         `json:"imagePullSecrets,omitempty"`
-	RouterImage      string           `json:"routerImage,omitempty"`
+	//Image pull policy
+	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
+	ImagePolicy v1.PullPolicy `json:"imagePolicy,omitempty"`
+	//Extra image pull secrets
+	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
+	ImagePullSecrets []string `json:"imagePullSecrets,omitempty"`
+	//Router image repo and tag
+	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
+	RouterImage string `json:"routerImage,omitempty"`
 }
 
 // Certs defines certifications used by all exporters
@@ -86,11 +100,21 @@ type ExporterStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "operator-sdk generate k8s" to regenerate code after modifying this file
 	// Add custom validation using kubebuilder tags: https://book-v1.book.kubebuilder.io/beyond_basics/generating_crd.html
-	Cert            string                  `json:"cert,omitempty"`
-	RouterConfigMap string                  `json:"routerConfigmap,omitempty"`
-	Collectd        appsv1.DeploymentStatus `json:"collectd,omitempty"`
-	NodeExporter    appsv1.DaemonSetStatus  `json:"nodeExporter,omitempty"`
-	KubeState       appsv1.DeploymentStatus `json:"kubeState,omitempty"`
+	//Status of tls certification
+	// +operator-sdk:gen-csv:customresourcedefinitions.statusDescriptors=true
+	Cert string `json:"cert,omitempty"`
+	//Status of router configmap
+	// +operator-sdk:gen-csv:customresourcedefinitions.statusDescriptors=true
+	RouterConfigMap string `json:"routerConfigmap,omitempty"`
+	//Status of collectd deployment
+	// +operator-sdk:gen-csv:customresourcedefinitions.statusDescriptors=true
+	Collectd appsv1.DeploymentStatus `json:"collectd,omitempty"`
+	//Status of node-exporter daemonset
+	// +operator-sdk:gen-csv:customresourcedefinitions.statusDescriptors=true
+	NodeExporter appsv1.DaemonSetStatus `json:"nodeExporter,omitempty"`
+	//Status of kube-state-metrics deployment
+	// +operator-sdk:gen-csv:customresourcedefinitions.statusDescriptors=true
+	KubeState appsv1.DeploymentStatus `json:"kubeState,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
@@ -98,6 +122,7 @@ type ExporterStatus struct {
 // Exporter is the Schema for the exporters API
 // +kubebuilder:subresource:status
 // +kubebuilder:resource:path=exporters,scope=Namespaced
+// +operator-sdk:gen-csv:customresourcedefinitions.displayName="IBM Monitoring Exporter"
 type Exporter struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`

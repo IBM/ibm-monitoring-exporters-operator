@@ -18,6 +18,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: ibm-monitoring-exporter
+  namespace: ibm-common-services
 roleRef:
   kind: ClusterRole
   name: ibm-monitoring-exporter

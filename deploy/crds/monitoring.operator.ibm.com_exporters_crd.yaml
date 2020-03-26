@@ -32,7 +32,7 @@ spec:
           description: ExporterSpec defines the desired state of Exporter
           properties:
             certs:
-              description: Certs defines certifications used by all exporters
+              description: Configurations for tls certifications
               properties:
                 autoClean:
                   description: If it is false, user can create secret manually before
@@ -52,7 +52,7 @@ spec:
               - exporterSecret
               type: object
             collectd:
-              description: Collectd defines desired state of Collectd exporter
+              description: Configurations for collectd deployment
               properties:
                 collectorPort:
                   format: int32
@@ -110,15 +110,15 @@ spec:
               - enable
               type: object
             imagePolicy:
-              description: PullPolicy describes a policy for if/when to pull a container
-                image
+              description: Image pull policy
               type: string
             imagePullSecrets:
+              description: Extra image pull secrets
               items:
                 type: string
               type: array
             kubeStateMetrics:
-              description: KubeStateMetrics defines desired state of kube-state-metrics
+              description: Configurations for kube-state-metrics deployment
               properties:
                 enable:
                   type: boolean
@@ -173,7 +173,7 @@ spec:
               - enable
               type: object
             nodeExporter:
-              description: NodeExporter defines desired state of NodeExporter exporter
+              description: Configurations for node-exporter daemonset
               properties:
                 enable:
                   type: boolean
@@ -234,6 +234,7 @@ spec:
               - enable
               type: object
             routerImage:
+              description: Router image repo and tag
               type: string
           type: object
         status:
@@ -243,11 +244,11 @@ spec:
               description: 'INSERT ADDITIONAL STATUS FIELD - define observed state
                 of cluster Important: Run "operator-sdk generate k8s" to regenerate
                 code after modifying this file Add custom validation using kubebuilder
-                tags: https://book-v1.book.kubebuilder.io/beyond_basics/generating_crd.html'
+                tags: https://book-v1.book.kubebuilder.io/beyond_basics/generating_crd.html
+                Status of tls certification'
               type: string
             collectd:
-              description: DeploymentStatus is the most recently observed status of
-                the Deployment.
+              description: Status of collectd deployment
               properties:
                 availableReplicas:
                   description: Total number of available pods (ready for at least
@@ -323,8 +324,7 @@ spec:
                   type: integer
               type: object
             kubeState:
-              description: DeploymentStatus is the most recently observed status of
-                the Deployment.
+              description: Status of kube-state-metrics deployment
               properties:
                 availableReplicas:
                   description: Total number of available pods (ready for at least
@@ -400,8 +400,7 @@ spec:
                   type: integer
               type: object
             nodeExporter:
-              description: DaemonSetStatus represents the current status of a daemon
-                set.
+              description: Status of node-exporter daemonset
               properties:
                 collisionCount:
                   description: Count of hash collisions for the DaemonSet. The DaemonSet
@@ -490,6 +489,7 @@ spec:
               - numberReady
               type: object
             routerConfigmap:
+              description: Status of router configmap
               type: string
           type: object
       type: object

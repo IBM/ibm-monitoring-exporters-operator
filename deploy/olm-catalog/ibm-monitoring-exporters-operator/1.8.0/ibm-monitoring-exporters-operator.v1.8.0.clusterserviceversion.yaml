@@ -12,10 +12,10 @@ metadata:
           },
           "spec": {
             "certs": {
+              "autoClean": true,
               "exporterSecret": "ibm-monitoring-exporter-certs",
               "issuer": "cs-ca-clusterissuer",
-              "monitoringClientSecret": "ibm-monitoring-client-certs",
-              "autoClean": true
+              "monitoringClientSecret": "ibm-monitoring-client-certs"
             },
             "collectd": {
               "collectorPort": 25826,
@@ -55,23 +55,79 @@ metadata:
       ]
     capabilities: Basic Install
     categories: Monitoring
-    certified: 'false'
-    createdAt: 2020-03-25 12:00:00
-    support: IBM
-    description: Provisions node-exporter, kube-state-metrics and collectd exporter with tls enabled
+    certified: "false"
+    createdAt: "2020-03-25 12:00:00"
+    description: Provisions node-exporter, kube-state-metrics and collectd exporter
+      with tls enabled
     repository: https://github.com/IBM/ibm-monitoring-exporters-operator
+    support: IBM
   name: ibm-monitoring-exporters-operator.v1.8.0
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
   customresourcedefinitions:
     owned:
-    - description: Exporter defines information for collectd exporter, node-exporter and kube-state-matrics
+    - description: Exporter is the Schema for the exporters API
+      displayName: IBM Monitoring Exporter
       kind: Exporter
       name: exporters.monitoring.operator.ibm.com
+      resources:
+        - kind: deployments
+          version: v1
+        - kind: daemonsets
+          version: v1
+        - kind: configmaps
+          version: v1
+        - kind: services
+          version: v1
+        - kind: certificates
+          version: v1alpha1
+        - kind: exporters
+          version: v1alpha1
+      specDescriptors:
+      - description: Configurations for tls certifications
+        displayName: Certs
+        path: certs
+      - description: Configurations for collectd deployment
+        displayName: Collectd
+        path: collectd
+      - description: Image pull policy
+        displayName: Image Policy
+        path: imagePolicy
+      - description: Extra image pull secrets
+        displayName: Image Pull Secrets
+        path: imagePullSecrets
+      - description: Configurations for kube-state-metrics deployment
+        displayName: Kube State Metrics
+        path: kubeStateMetrics
+      - description: Configurations for node-exporter daemonset
+        displayName: Node Exporter
+        path: nodeExporter
+      - description: Router image repo and tag
+        displayName: Router Image
+        path: routerImage
+      statusDescriptors:
+      - description: 'INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
+          Important: Run "operator-sdk generate k8s" to regenerate code after modifying
+          this file Add custom validation using kubebuilder tags: https://book-v1.book.kubebuilder.io/beyond_basics/generating_crd.html
+          Status of tls certification'
+        displayName: Cert
+        path: cert
+      - description: Status of collectd deployment
+        displayName: Collectd
+        path: collectd
+      - description: Status of kube-state-metrics deployment
+        displayName: Kube State
+        path: kubeState
+      - description: Status of node-exporter daemonset
+        displayName: Node Exporter
+        path: nodeExporter
+      - description: Status of router configmap
+        displayName: Router Config Map
+        path: routerConfigmap
       version: v1alpha1
-      displayName: IBM Monitoring Exporter
-  description: IBM Monitoring Exporters Operator provisions node-exporter, kube-state-metrics and collectd exporter with tls enabled
+  description: IBM Monitoring Exporters Operator provisions node-exporter, kube-state-metrics
+    and collectd exporter with tls enabled
   displayName: IBM Monitoring Exporters Operator
   install:
     spec:
@@ -129,9 +185,9 @@ spec:
           - services
           - configmaps
           - pods
-          - secrets
           - endpoints
           - events
+          - secrets
           verbs:
           - '*'
         - apiGroups:
@@ -180,13 +236,13 @@ spec:
           strategy: {}
           template:
             metadata:
+              annotations:
+                productID: 068a62892a1e4db39641342e592daa25
+                productMetric: FREE
+                productName: IBM Cloud Platform Common Services
+                productVersion: 3.3.0
               labels:
                 name: ibm-monitoring-exporters-operator
-              annotations:
-                productName: IBM Cloud Platform Common Services
-                productID: "068a62892a1e4db39641342e592daa25"
-                productVersion: "3.3.0"
-                productMetric: FREE
             spec:
               containers:
               - command:
@@ -218,7 +274,7 @@ spec:
   - supported: false
     type: AllNamespaces
   maturity: alpha
-  provider: 
+  provider:
     name: IBM
   replaces: ibm-monitoring-exporters-operator.v0.0.0
   version: 1.8.0
