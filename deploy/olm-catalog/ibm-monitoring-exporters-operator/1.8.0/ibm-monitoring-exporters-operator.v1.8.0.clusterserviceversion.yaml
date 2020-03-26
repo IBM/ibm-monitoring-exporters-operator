@@ -20,7 +20,7 @@ metadata:
             "collectd": {
               "collectorPort": 25826,
               "enable": true,
-              "image": "hyc-cloud-private-edge-docker-local.artifactory.swg-devops.com/ibmcom-amd64/collectd-exporter:v0.4.0-build.3",
+              "image": "quay.io/opencloudio/collectd-exporter:v0.4.0-build.4",
               "metricsPort": 8443,
               "resource": {},
               "routerResource": {
@@ -39,17 +39,17 @@ metadata:
             ],
             "kubeStateMetrics": {
               "enable": true,
-              "image": "hyc-cloud-private-edge-docker-local.artifactory.swg-devops.com/ibmcom-amd64/kube-state-metrics:v1.9.4-build.1",
+              "image": "quay.io/opencloudio/kube-state-metrics:v1.9.4-build.2",
               "port": 8443
             },
             "nodeExporter": {
               "enable": true,
               "healtyPort": 8556,
               "hostPort": 9109,
-              "image": "hyc-cloud-private-edge-docker-local.artifactory.swg-devops.com/ibmcom-amd64/node-exporter:v0.18.1-build.1",
+              "image": "quay.io/opencloudio/node-exporter:v0.18.1-build.2",
               "servicePort": 8555
             },
-            "routerImage": "hyc-cloud-private-edge-docker-local.artifactory.swg-devops.com/ibmcom-amd64/icp-management-ingress:2.5.1"
+            "routerImage": "quay.io/opencloudio/icp-management-ingress:2.5.1"
           }
         }
       ]
