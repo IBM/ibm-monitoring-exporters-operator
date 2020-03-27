@@ -73,17 +73,13 @@ spec:
       kind: Exporter
       name: exporters.monitoring.operator.ibm.com
       resources:
-        - kind: deployments
+        - kind: Deployment
           version: v1
-        - kind: daemonsets
+        - kind: DaemonSet
           version: v1
-        - kind: configmaps
+        - kind: Service
           version: v1
-        - kind: services
-          version: v1
-        - kind: certificates
-          version: v1alpha1
-        - kind: exporters
+        - kind: Certificate
           version: v1alpha1
       specDescriptors:
       - description: Configurations for tls certifications
