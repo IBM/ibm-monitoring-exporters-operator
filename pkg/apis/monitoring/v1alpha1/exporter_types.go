@@ -17,7 +17,6 @@
 package v1alpha1
 
 import (
-	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -108,13 +107,13 @@ type ExporterStatus struct {
 	RouterConfigMap string `json:"routerConfigmap,omitempty"`
 	//Status of collectd deployment
 	// +operator-sdk:gen-csv:customresourcedefinitions.statusDescriptors=true
-	Collectd appsv1.DeploymentStatus `json:"collectd,omitempty"`
+	Collectd string `json:"collectd,omitempty"`
 	//Status of node-exporter daemonset
 	// +operator-sdk:gen-csv:customresourcedefinitions.statusDescriptors=true
-	NodeExporter appsv1.DaemonSetStatus `json:"nodeExporter,omitempty"`
+	NodeExporter string `json:"nodeExporter,omitempty"`
 	//Status of kube-state-metrics deployment
 	// +operator-sdk:gen-csv:customresourcedefinitions.statusDescriptors=true
-	KubeState appsv1.DeploymentStatus `json:"kubeState,omitempty"`
+	KubeState string `json:"kubeState,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
