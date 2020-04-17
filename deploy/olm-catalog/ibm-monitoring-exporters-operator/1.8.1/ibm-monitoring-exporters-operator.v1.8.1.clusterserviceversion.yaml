@@ -51,6 +51,25 @@ metadata:
             },
             "routerImage": "quay.io/opencloudio/icp-management-ingress:2.5.1"
           }
+        },
+        {
+          "apiVersion":"operator.ibm.com/v1alpha1",
+          "kind":"OperandRequest",
+          "metadata":{
+            "name":"monitoring-exporters-operator-request"
+          },
+          "spec":{
+            "requests":[
+              {
+                "operands":[
+                  {
+                    "name":"ibm-cert-manager-operator"
+                  }
+                ],
+                "registry":"common-service"
+              }
+            ]
+          }
         }
       ]
     capabilities: Basic Install
