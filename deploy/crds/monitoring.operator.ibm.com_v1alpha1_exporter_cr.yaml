@@ -1,6 +1,10 @@
 apiVersion: monitoring.operator.ibm.com/v1alpha1
 kind: Exporter
 metadata:
+  labels:
+    app.kubernetes.io/name: ibm-monitoring
+    app.kubernetes.io/instance: exporter
+    app.kubernetes.io/managed-by: ibm-monitoring-exporters-operator
   name: ibm-monitoring
 spec:
   routerImage: "quay.io/opencloudio/icp-management-ingress:2.5.1"
