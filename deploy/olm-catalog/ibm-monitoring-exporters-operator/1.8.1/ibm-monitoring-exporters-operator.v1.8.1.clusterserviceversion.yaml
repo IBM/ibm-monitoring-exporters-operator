@@ -1,6 +1,10 @@
 apiVersion: operators.coreos.com/v1alpha1
 kind: ClusterServiceVersion
 metadata:
+  labels:
+    app.kubernetes.io/name: ibm-monitoring
+    app.kubernetes.io/instance: exporter
+    app.kubernetes.io/managed-by: ibm-monitoring-exporters-operator
   annotations:
     alm-examples: |-
       [
@@ -262,7 +266,24 @@ spec:
                 productVersion: 3.3.0
               labels:
                 name: ibm-monitoring-exporters-operator
+                app.kubernetes.io/name: ibm-monitoring
+                app.kubernetes.io/instance: exporter
+                app.kubernetes.io/managed-by: ibm-monitoring-exporters-operator
             spec:
+              hostIPC: false
+              hostNetwork: false
+              hostPID: false
+              affinity:
+                nodeAffinity:
+                  requiredDuringSchedulingIgnoredDuringExecution:
+                    nodeSelectorTerms:
+                    - matchExpressions:
+                      - key: beta.kubernetes.io/arch
+                        operator: In
+                        values:
+                        - amd64
+                        - ppc64le
+                        - s390x
               containers:
               - command:
                 - ibm-monitoring-exporters-operator
@@ -280,7 +301,21 @@ spec:
                 image: quay.io/opencloudio/ibm-monitoring-exporters-operator
                 imagePullPolicy: Always
                 name: ibm-monitoring-exporters-operator
-                resources: {}
+                securityContext:
+                  privileged: false
+                  allowPrivilegeEscalation: false
+                  readOnlyRootFilesystem: true
+                  runAsNonRoot: true
+                  capabilities:
+                    drop:
+                    - ALL
+                resources:
+                  limits:
+                    cpu: 50m
+                    memory: 128Mi
+                  requests:
+                    cpu: 20m
+                    memory: 64Mi
               serviceAccountName: ibm-monitoring-exporters-operator
     strategy: deployment
   installModes:
