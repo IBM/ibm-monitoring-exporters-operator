@@ -18,6 +18,7 @@ package handler
 
 import (
 	"context"
+	"fmt"
 
 	kerrors "k8s.io/apimachinery/pkg/api/errors"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -81,16 +82,31 @@ func (h *Handler) updateStatus() error {
 	}
 	//collectd
 	if h.CurrentState.CollectdState.Deployment != nil {
-		h.CR.Status.Collectd = h.CurrentState.CollectdState.Deployment.Status
+		h.CR.Status.Collectd = fmt.Sprintf("%d desired | %d updated | %d total | %d available | %d unavailable",
+			h.CurrentState.CollectdState.Deployment.Status.Replicas,
+			h.CurrentState.CollectdState.Deployment.Status.UpdatedReplicas,
+			h.CurrentState.CollectdState.Deployment.Status.ReadyReplicas,
+			h.CurrentState.CollectdState.Deployment.Status.AvailableReplicas,
+			h.CurrentState.CollectdState.Deployment.Status.UnavailableReplicas)
 	}
 
 	//nodeexporter
 	if h.CurrentState.NodeExporterState.DeamonSet != nil {
-		h.CR.Status.NodeExporter = h.CurrentState.NodeExporterState.DeamonSet.Status
+		h.CR.Status.NodeExporter = fmt.Sprintf("%d desired | %d current | %d ready | %d up-to-date | %d available",
+			h.CurrentState.NodeExporterState.DeamonSet.Status.DesiredNumberScheduled,
+			h.CurrentState.NodeExporterState.DeamonSet.Status.CurrentNumberScheduled,
+			h.CurrentState.NodeExporterState.DeamonSet.Status.NumberReady,
+			h.CurrentState.NodeExporterState.DeamonSet.Status.UpdatedNumberScheduled,
+			h.CurrentState.NodeExporterState.DeamonSet.Status.NumberAvailable)
 	}
 	//kube-state
 	if h.CurrentState.KubeStateMetricsState.Deployment != nil {
-		h.CR.Status.KubeState = h.CurrentState.CollectdState.Deployment.Status
+		h.CR.Status.KubeState = fmt.Sprintf("%d desired | %d updated | %d total | %d available | %d unavailable",
+			h.CurrentState.KubeStateMetricsState.Deployment.Status.Replicas,
+			h.CurrentState.KubeStateMetricsState.Deployment.Status.UpdatedReplicas,
+			h.CurrentState.KubeStateMetricsState.Deployment.Status.ReadyReplicas,
+			h.CurrentState.KubeStateMetricsState.Deployment.Status.AvailableReplicas,
+			h.CurrentState.KubeStateMetricsState.Deployment.Status.UnavailableReplicas)
 	}
 
 	if err := h.Client.Status().Update(h.Context, h.CR); err != nil {
