@@ -12,7 +12,7 @@ The operator is part of IBM Monitoring Operator stack. It installs node-exporter
 
 ## Operator versions
 
-- 1.8.0
+- 1.9.0
 
 ## Prerequisites
 
@@ -20,6 +20,11 @@ This operator is part of IBM Common Services. You can use OLM or ODLM to install
 
 - IBM Cert Manager service for TLS certification management
 For the details, please refer to the CRD.
+
+## SecurityContextConstraints Requirements
+
+- privileged SCC for operands
+- restricted SCC for operator
 
 ## Documentation
 
