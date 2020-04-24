@@ -85,7 +85,7 @@ metadata:
     repository: https://github.com/IBM/ibm-monitoring-exporters-operator
     containerImage: quay.io/opencloudio/ibm-monitoring-exporters-operator
     support: IBM
-  name: ibm-monitoring-exporters-operator.v1.8.1
+  name: ibm-monitoring-exporters-operator.v1.9.0
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -346,4 +346,4 @@ spec:
   provider:
     name: IBM
   replaces: ibm-monitoring-exporters-operator.v1.8.0
-  version: 1.8.1
+  version: 1.9.0
