@@ -11,7 +11,6 @@ spec:
   certs:
     issuer: "cs-ca-clusterissuer"
     exporterSecret: "ibm-monitoring-exporter-certs"
-    monitoringClientSecret: "ibm-monitoring-client-certs"
     autoClean: true
   imagePullSecrets:
     - infra-registry-key
