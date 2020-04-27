@@ -18,8 +18,7 @@ metadata:
             "certs": {
               "autoClean": true,
               "exporterSecret": "ibm-monitoring-exporter-certs",
-              "issuer": "cs-ca-clusterissuer",
-              "monitoringClientSecret": "ibm-monitoring-client-certs"
+              "issuer": "cs-ca-clusterissuer"
             },
             "collectd": {
               "collectorPort": 25826,
