@@ -12,8 +12,6 @@ spec:
     issuer: "cs-ca-clusterissuer"
     exporterSecret: "ibm-monitoring-exporter-certs"
     autoClean: true
-  imagePullSecrets:
-    - infra-registry-key
   collectd:
     enable: true
     metricsPort: 8443
