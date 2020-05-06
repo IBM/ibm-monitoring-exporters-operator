@@ -17,6 +17,10 @@
 package model
 
 import (
+	"fmt"
+	"os"
+	"strings"
+
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -139,9 +143,21 @@ func getCollectdContainer(cr *monitoringv1alpha1.Exporter) *v1.Container {
 		InitialDelaySeconds: 30,
 		TimeoutSeconds:      30,
 		PeriodSeconds:       10}
+
+	var imageRepo string
+	var imageReg string
+	imageRepo = os.Getenv(collectdImageEnv)
+	imageCRConfs := strings.Split(cr.Spec.Collectd.Image, `/`)
+	if len(imageCRConfs) > 1 {
+		imageReg = fmt.Sprintf(`%s/%s`, imageCRConfs[0], imageCRConfs[1])
+
+	} else {
+		return nil
+	}
+
 	container := v1.Container{
 		Name:            "collectd-exporter",
-		Image:           cr.Spec.Collectd.Image,
+		Image:           fmt.Sprintf(`%s/%s`, imageReg, imageRepo),
 		ImagePullPolicy: cr.Spec.ImagePolicy,
 		Resources:       cr.Spec.Collectd.Resource,
 		SecurityContext: &v1.SecurityContext{

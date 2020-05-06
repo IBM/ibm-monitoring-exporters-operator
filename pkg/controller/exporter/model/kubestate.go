@@ -17,6 +17,10 @@
 package model
 
 import (
+	"fmt"
+	"os"
+	"strings"
+
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -151,9 +155,20 @@ func getKubeStateContainer(cr *monitoringv1alpha1.Exporter) *v1.Container {
 		PeriodSeconds:       10,
 	}
 
+	var imageRepo string
+	var imageReg string
+	imageRepo = os.Getenv(kubeStateImageEnv)
+	imageCRConfs := strings.Split(cr.Spec.KubeStateMetrics.Image, `/`)
+	if len(imageCRConfs) > 1 {
+		imageReg = fmt.Sprintf(`%s/%s`, imageCRConfs[0], imageCRConfs[1])
+
+	} else {
+		return nil
+	}
+
 	container := &v1.Container{
 		Name:            "kubestatemetrics",
-		Image:           cr.Spec.KubeStateMetrics.Image,
+		Image:           fmt.Sprintf(`%s/%s`, imageReg, imageRepo),
 		ImagePullPolicy: cr.Spec.ImagePolicy,
 		Resources:       cr.Spec.KubeStateMetrics.Resource,
 		SecurityContext: &v1.SecurityContext{

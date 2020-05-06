@@ -18,6 +18,8 @@ package model
 
 import (
 	"fmt"
+	"os"
+	"strings"
 
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
@@ -143,9 +145,21 @@ func getNodeExporterContainer(cr *monitoringv1alpha1.Exporter) *v1.Container {
 	rofs := true
 	userID := int64(65534)
 	noRoot := true
+
+	var imageRepo string
+	var imageReg string
+	imageRepo = os.Getenv(nodeExporterImageEnv)
+	imageCRConfs := strings.Split(cr.Spec.NodeExporter.Image, `/`)
+	if len(imageCRConfs) > 1 {
+		imageReg = fmt.Sprintf(`%s/%s`, imageCRConfs[0], imageCRConfs[1])
+
+	} else {
+		return nil
+	}
+
 	container := &v1.Container{
 		Name:            "nodeexporter",
-		Image:           cr.Spec.NodeExporter.Image,
+		Image:           fmt.Sprintf(`%s/%s`, imageReg, imageRepo),
 		ImagePullPolicy: cr.Spec.ImagePolicy,
 		Resources:       cr.Spec.NodeExporter.Resource,
 		SecurityContext: &v1.SecurityContext{
