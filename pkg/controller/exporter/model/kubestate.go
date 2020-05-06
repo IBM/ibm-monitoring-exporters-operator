@@ -157,18 +157,25 @@ func getKubeStateContainer(cr *monitoringv1alpha1.Exporter) *v1.Container {
 
 	var imageRepo string
 	var imageReg string
-	imageRepo = os.Getenv(kubeStateImageEnv)
-	imageCRConfs := strings.Split(cr.Spec.KubeStateMetrics.Image, `/`)
-	if len(imageCRConfs) > 1 {
-		imageReg = fmt.Sprintf(`%s/%s`, imageCRConfs[0], imageCRConfs[1])
-
+	var image string
+	if strings.Contains(cr.Spec.KubeStateMetrics.Image, `sha256:`) {
+		image = cr.Spec.KubeStateMetrics.Image
 	} else {
-		return nil
+		imageRepo = os.Getenv(kubeStateImageEnv)
+		imageCRConfs := strings.Split(cr.Spec.KubeStateMetrics.Image, `/`)
+
+		if len(imageCRConfs) > 1 {
+			imageReg = fmt.Sprintf(`%s/%s`, imageCRConfs[0], imageCRConfs[1])
+			image = fmt.Sprintf(`%s/%s`, imageReg, imageRepo)
+
+		} else {
+			return nil
+		}
 	}
 
 	container := &v1.Container{
 		Name:            "kubestatemetrics",
-		Image:           fmt.Sprintf(`%s/%s`, imageReg, imageRepo),
+		Image:           image,
 		ImagePullPolicy: cr.Spec.ImagePolicy,
 		Resources:       cr.Spec.KubeStateMetrics.Resource,
 		SecurityContext: &v1.SecurityContext{

@@ -123,18 +123,25 @@ func getRouterContainer(cr *monitoringv1alpha1.Exporter, exporter ExporterKind) 
 	}
 	var imageRepo string
 	var imageReg string
-	imageRepo = os.Getenv(routerImageEnv)
-	imageCRConfs := strings.Split(cr.Spec.RouterImage, `/`)
-	if len(imageCRConfs) > 1 {
-		imageReg = fmt.Sprintf(`%s/%s`, imageCRConfs[0], imageCRConfs[1])
-
+	var image string
+	if strings.Contains(cr.Spec.RouterImage, `sha256:`) {
+		image = cr.Spec.RouterImage
 	} else {
-		return nil
+		imageRepo = os.Getenv(routerImageEnv)
+		imageCRConfs := strings.Split(cr.Spec.RouterImage, `/`)
+
+		if len(imageCRConfs) > 1 {
+			imageReg = fmt.Sprintf(`%s/%s`, imageCRConfs[0], imageCRConfs[1])
+			image = fmt.Sprintf(`%s/%s`, imageReg, imageRepo)
+
+		} else {
+			return nil
+		}
 	}
 
 	container := v1.Container{
 		Name:            "router",
-		Image:           fmt.Sprintf(`%s/%s`, imageReg, imageRepo),
+		Image:           image,
 		ImagePullPolicy: cr.Spec.ImagePolicy,
 		Command:         []string{"/opt/ibm/router/entry/entrypoint.sh"},
 		//Command: []string{"sleep", "3600"},
