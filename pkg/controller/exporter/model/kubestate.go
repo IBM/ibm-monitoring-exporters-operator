@@ -17,7 +17,6 @@
 package model
 
 import (
-	"fmt"
 	"os"
 	"strings"
 
@@ -155,22 +154,11 @@ func getKubeStateContainer(cr *monitoringv1alpha1.Exporter) *v1.Container {
 		PeriodSeconds:       10,
 	}
 
-	var imageRepo string
-	var imageReg string
 	var image string
 	if strings.Contains(cr.Spec.KubeStateMetrics.Image, `sha256:`) {
 		image = cr.Spec.KubeStateMetrics.Image
 	} else {
-		imageRepo = os.Getenv(kubeStateImageEnv)
-		imageCRConfs := strings.Split(cr.Spec.KubeStateMetrics.Image, `/`)
-
-		if len(imageCRConfs) > 1 {
-			imageReg = fmt.Sprintf(`%s/%s`, imageCRConfs[0], imageCRConfs[1])
-			image = fmt.Sprintf(`%s/%s`, imageReg, imageRepo)
-
-		} else {
-			return nil
-		}
+		image = os.Getenv(kubeStateImageEnv)
 	}
 
 	container := &v1.Container{

@@ -23,7 +23,6 @@ metadata:
             "collectd": {
               "collectorPort": 25826,
               "enable": true,
-              "image": "quay.io/opencloudio",
               "metricsPort": 8443,
               "resource": {},
               "routerResource": {
@@ -39,17 +38,14 @@ metadata:
             },
             "kubeStateMetrics": {
               "enable": true,
-              "image": "quay.io/opencloudio",
               "port": 8443
             },
             "nodeExporter": {
               "enable": true,
               "healtyPort": 8556,
               "hostPort": 9109,
-              "image": "quay.io/opencloudio",
               "servicePort": 8555
             },
-            "routerImage": "quay.io/opencloudio"
           }
         },
         {
@@ -295,13 +291,13 @@ spec:
                 - name: OPERATOR_NAME
                   value: ibm-monitoring-exporters-operator
                 - name: ROUTER_IMAGE
-                  value: icp-management-ingress@sha256:c49e551f9f68f2e024a8a50e35f2ce4a6ec86f169d9bfb489b47fa6e8e216571
+                  value: quay.io/opencloudio/icp-management-ingress@sha256:c49e551f9f68f2e024a8a50e35f2ce4a6ec86f169d9bfb489b47fa6e8e216571
                 - name: COLLECTD_IMAGE
-                  value: collectd-exporter@sha256:b72a2808d385d53ad3a292076fd6337d05ef81c4f4158aae39bf72d11830b056
+                  value: quay.io/opencloudio/collectd-exporter@sha256:b72a2808d385d53ad3a292076fd6337d05ef81c4f4158aae39bf72d11830b056
                 - name: NODE_IMAGE
-                  value: node-exporter@sha256:a8cf0c4af2a6a07ddedf5cc3b2aec002c037d20678e73e272b87d36a73bf8b8b
+                  value: quay.io/opencloudio/node-exporter@sha256:a8cf0c4af2a6a07ddedf5cc3b2aec002c037d20678e73e272b87d36a73bf8b8b
                 - name: KUBESTATE_IMAGE
-                  value: kube-state-metrics@sha256:aaf26bac7dcfb3dae0e1355ad29b30b7613b14f3fbba4b4229ac3492186751d5
+                  value: quay.io/opencloudio/kube-state-metrics@sha256:aaf26bac7dcfb3dae0e1355ad29b30b7613b14f3fbba4b4229ac3492186751d5
                 image: quay.io/opencloudio/ibm-monitoring-exporters-operator
                 imagePullPolicy: Always
                 name: ibm-monitoring-exporters-operator

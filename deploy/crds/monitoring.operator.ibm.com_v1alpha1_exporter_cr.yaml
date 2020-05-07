@@ -7,7 +7,6 @@ metadata:
     app.kubernetes.io/managed-by: ibm-monitoring-exporters-operator
   name: ibm-monitoring
 spec:
-  routerImage: "quay.io/opencloudio"
   certs:
     issuer: "cs-ca-clusterissuer"
     exporterSecret: "ibm-monitoring-exporter-certs"
@@ -16,7 +15,6 @@ spec:
     enable: true
     metricsPort: 8443
     collectorPort: 25826
-    image: "quay.io/opencloudio"
     routerResource:
       limits:
         cpu: 200m
@@ -30,9 +28,7 @@ spec:
     hostPort: 9109
     servicePort: 8555
     healtyPort: 8556
-    image: "quay.io/opencloudio"
   kubeStateMetrics:
     enable: true
     port: 8443
-    image: "quay.io/opencloudio"
 

@@ -18,7 +18,6 @@ package model
 
 import (
 	"bytes"
-	"fmt"
 	"html/template"
 	"os"
 	"strings"
@@ -121,22 +120,12 @@ func getRouterContainer(cr *monitoringv1alpha1.Exporter, exporter ExporterKind) 
 			MountPath: "/opt/ibm/router/certs",
 		},
 	}
-	var imageRepo string
-	var imageReg string
+
 	var image string
 	if strings.Contains(cr.Spec.RouterImage, `sha256:`) {
 		image = cr.Spec.RouterImage
 	} else {
-		imageRepo = os.Getenv(routerImageEnv)
-		imageCRConfs := strings.Split(cr.Spec.RouterImage, `/`)
-
-		if len(imageCRConfs) > 1 {
-			imageReg = fmt.Sprintf(`%s/%s`, imageCRConfs[0], imageCRConfs[1])
-			image = fmt.Sprintf(`%s/%s`, imageReg, imageRepo)
-
-		} else {
-			return nil
-		}
+		image = os.Getenv(routerImageEnv)
 	}
 
 	container := v1.Container{

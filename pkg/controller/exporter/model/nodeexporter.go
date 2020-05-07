@@ -146,22 +146,11 @@ func getNodeExporterContainer(cr *monitoringv1alpha1.Exporter) *v1.Container {
 	userID := int64(65534)
 	noRoot := true
 
-	var imageRepo string
-	var imageReg string
 	var image string
 	if strings.Contains(cr.Spec.NodeExporter.Image, `sha256:`) {
 		image = cr.Spec.NodeExporter.Image
 	} else {
-		imageRepo = os.Getenv(nodeExporterImageEnv)
-		imageCRConfs := strings.Split(cr.Spec.NodeExporter.Image, `/`)
-
-		if len(imageCRConfs) > 1 {
-			imageReg = fmt.Sprintf(`%s/%s`, imageCRConfs[0], imageCRConfs[1])
-			image = fmt.Sprintf(`%s/%s`, imageReg, imageRepo)
-
-		} else {
-			return nil
-		}
+		image = os.Getenv(nodeExporterImageEnv)
 	}
 
 	container := &v1.Container{

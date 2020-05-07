@@ -17,7 +17,6 @@
 package model
 
 import (
-	"fmt"
 	"os"
 	"strings"
 
@@ -144,22 +143,11 @@ func getCollectdContainer(cr *monitoringv1alpha1.Exporter) *v1.Container {
 		TimeoutSeconds:      30,
 		PeriodSeconds:       10}
 
-	var imageRepo string
-	var imageReg string
 	var image string
 	if strings.Contains(cr.Spec.Collectd.Image, `sha256:`) {
 		image = cr.Spec.Collectd.Image
 	} else {
-		imageRepo = os.Getenv(collectdImageEnv)
-		imageCRConfs := strings.Split(cr.Spec.Collectd.Image, `/`)
-
-		if len(imageCRConfs) > 1 {
-			imageReg = fmt.Sprintf(`%s/%s`, imageCRConfs[0], imageCRConfs[1])
-			image = fmt.Sprintf(`%s/%s`, imageReg, imageRepo)
-
-		} else {
-			return nil
-		}
+		image = os.Getenv(collectdImageEnv)
 	}
 
 	container := v1.Container{
