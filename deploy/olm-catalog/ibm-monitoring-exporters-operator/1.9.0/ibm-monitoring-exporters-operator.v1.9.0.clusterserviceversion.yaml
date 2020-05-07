@@ -45,7 +45,7 @@ metadata:
               "healtyPort": 8556,
               "hostPort": 9109,
               "servicePort": 8555
-            },
+            }
           }
         },
         {
