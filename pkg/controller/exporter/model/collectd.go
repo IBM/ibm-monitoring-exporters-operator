@@ -17,6 +17,9 @@
 package model
 
 import (
+	"os"
+	"strings"
+
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -139,9 +142,17 @@ func getCollectdContainer(cr *monitoringv1alpha1.Exporter) *v1.Container {
 		InitialDelaySeconds: 30,
 		TimeoutSeconds:      30,
 		PeriodSeconds:       10}
+
+	var image string
+	if strings.Contains(cr.Spec.Collectd.Image, `sha256:`) {
+		image = cr.Spec.Collectd.Image
+	} else {
+		image = os.Getenv(collectdImageEnv)
+	}
+
 	container := v1.Container{
 		Name:            "collectd-exporter",
-		Image:           cr.Spec.Collectd.Image,
+		Image:           image,
 		ImagePullPolicy: cr.Spec.ImagePolicy,
 		Resources:       cr.Spec.Collectd.Resource,
 		SecurityContext: &v1.SecurityContext{

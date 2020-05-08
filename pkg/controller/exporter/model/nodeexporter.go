@@ -18,6 +18,8 @@ package model
 
 import (
 	"fmt"
+	"os"
+	"strings"
 
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
@@ -143,9 +145,17 @@ func getNodeExporterContainer(cr *monitoringv1alpha1.Exporter) *v1.Container {
 	rofs := true
 	userID := int64(65534)
 	noRoot := true
+
+	var image string
+	if strings.Contains(cr.Spec.NodeExporter.Image, `sha256:`) {
+		image = cr.Spec.NodeExporter.Image
+	} else {
+		image = os.Getenv(nodeExporterImageEnv)
+	}
+
 	container := &v1.Container{
 		Name:            "nodeexporter",
-		Image:           cr.Spec.NodeExporter.Image,
+		Image:           image,
 		ImagePullPolicy: cr.Spec.ImagePolicy,
 		Resources:       cr.Spec.NodeExporter.Resource,
 		SecurityContext: &v1.SecurityContext{

@@ -19,6 +19,8 @@ package model
 import (
 	"bytes"
 	"html/template"
+	"os"
+	"strings"
 
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -118,9 +120,17 @@ func getRouterContainer(cr *monitoringv1alpha1.Exporter, exporter ExporterKind) 
 			MountPath: "/opt/ibm/router/certs",
 		},
 	}
+
+	var image string
+	if strings.Contains(cr.Spec.RouterImage, `sha256:`) {
+		image = cr.Spec.RouterImage
+	} else {
+		image = os.Getenv(routerImageEnv)
+	}
+
 	container := v1.Container{
 		Name:            "router",
-		Image:           cr.Spec.RouterImage,
+		Image:           image,
 		ImagePullPolicy: cr.Spec.ImagePolicy,
 		Command:         []string{"/opt/ibm/router/entry/entrypoint.sh"},
 		//Command: []string{"sleep", "3600"},

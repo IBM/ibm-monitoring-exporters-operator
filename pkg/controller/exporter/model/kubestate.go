@@ -17,6 +17,9 @@
 package model
 
 import (
+	"os"
+	"strings"
+
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -151,9 +154,16 @@ func getKubeStateContainer(cr *monitoringv1alpha1.Exporter) *v1.Container {
 		PeriodSeconds:       10,
 	}
 
+	var image string
+	if strings.Contains(cr.Spec.KubeStateMetrics.Image, `sha256:`) {
+		image = cr.Spec.KubeStateMetrics.Image
+	} else {
+		image = os.Getenv(kubeStateImageEnv)
+	}
+
 	container := &v1.Container{
 		Name:            "kubestatemetrics",
-		Image:           cr.Spec.KubeStateMetrics.Image,
+		Image:           image,
 		ImagePullPolicy: cr.Spec.ImagePolicy,
 		Resources:       cr.Spec.KubeStateMetrics.Resource,
 		SecurityContext: &v1.SecurityContext{
