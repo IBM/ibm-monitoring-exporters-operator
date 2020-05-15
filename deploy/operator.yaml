@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   labels:
     app.kubernetes.io/name: ibm-monitoring
-    app.kubernetes.io/instance: exporter
+    app.kubernetes.io/instance: common-monitoring
     app.kubernetes.io/managed-by: ibm-monitoring-exporters-operator
   name: ibm-monitoring-exporters-operator
 spec:
@@ -15,7 +15,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: ibm-monitoring
-        app.kubernetes.io/instance: exporter
+        app.kubernetes.io/instance: common-monitoring
         app.kubernetes.io/managed-by: ibm-monitoring-exporters-operator
         name: ibm-monitoring-exporters-operator
       annotations:

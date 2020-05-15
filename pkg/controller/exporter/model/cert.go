@@ -47,10 +47,11 @@ func CertManagerCert(cr *monitoringv1alpha1.Exporter) *cmv1alpha1.Certificate {
 }
 
 func getCertLabels(cr *monitoringv1alpha1.Exporter) map[string]string {
-	lables := make(map[string]string)
-	lables[AppLabelKey] = AppLabekValue
+	labels := make(map[string]string)
+	labels[AppLabelKey] = AppLabekValue
+	labels = appendCommonLabels(labels)
 	for key, v := range cr.Labels {
-		lables[key] = v
+		labels[key] = v
 	}
-	return lables
+	return labels
 }
