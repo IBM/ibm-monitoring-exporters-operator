@@ -40,6 +40,13 @@ func (r *requeueError) Reason() string {
 	return r.reason
 }
 
+func appendCommonLabels(labels map[string]string) map[string]string {
+	labels["app.kubernetes.io/name"] = "ibm-monitoring"
+	labels["app.kubernetes.io/instance"] = "common-monitoring"
+	labels["app.kubernetes.io/managed-by"] = "ibm-monitoring-exporters-operator"
+	return labels
+}
+
 //IsRequeueErr tells if error type is requeueError
 func IsRequeueErr(e error) bool {
 	switch e.(type) {
@@ -71,11 +78,6 @@ const (
 	TrueStr = "true"
 	//HTTPSStr string of https
 	HTTPSStr = "https"
-
-	//HealthCheckLabelKey lable key for metering check
-	HealthCheckLabelKey = "app.kubernetes.io/instance"
-	//HealthCheckLabelValue label value for metering check
-	HealthCheckLabelValue = "common-monitoring"
 
 	//DefaultNodeExporterSA is default sa for node exporter
 	DefaultNodeExporterSA = "ibm-monitoring-exporter"

@@ -195,7 +195,7 @@ func getNodeExporterLabels(cr *monitoringv1alpha1.Exporter) map[string]string {
 	labels := make(map[string]string)
 	labels[AppLabelKey] = AppLabekValue
 	labels["component"] = "nodeexporter"
-	labels[HealthCheckLabelKey] = HealthCheckLabelValue
+	labels = appendCommonLabels(labels)
 	for key, v := range cr.Labels {
 		labels[key] = v
 	}

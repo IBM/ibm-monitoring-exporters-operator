@@ -54,6 +54,7 @@ func getRouterConfigmapName(cr *monitoringv1alpha1.Exporter) string {
 func getRouterConfigmapLables(cr *monitoringv1alpha1.Exporter) map[string]string {
 	labels := make(map[string]string)
 	labels[AppLabelKey] = AppLabekValue
+	labels = appendCommonLabels(labels)
 	for key, v := range cr.Labels {
 		labels[key] = v
 	}
