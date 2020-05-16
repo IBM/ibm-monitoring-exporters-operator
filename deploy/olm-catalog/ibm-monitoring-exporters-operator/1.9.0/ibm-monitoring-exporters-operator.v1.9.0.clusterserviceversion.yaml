@@ -299,7 +299,7 @@ spec:
                   value: quay.io/opencloudio/node-exporter@sha256:c6e70a339e0cde2b93c16a5640dd986fd46a5faf1e6bcf668f5feba300972c20
                 - name: KUBESTATE_IMAGE
                   value: quay.io/opencloudio/kube-state-metrics@sha256:eedcd7aed0ad465c7b2e151916e56013bd92356633a35fe5ab11115f2454c8ae
-                image: quay.io/opencloudio/ibm-monitoring-exporters-operator
+                image: quay.io/opencloudio/ibm-monitoring-exporters-operator@sha256:e740b9041bc3127324def8b8d826627af1143695d5fd210d7b04e82acb1a493c
                 imagePullPolicy: Always
                 name: ibm-monitoring-exporters-operator
                 securityContext:
