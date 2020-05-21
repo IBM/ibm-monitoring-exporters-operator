@@ -18,6 +18,7 @@ package model
 
 import (
 	"bytes"
+	"fmt"
 	"html/template"
 	"os"
 	"strings"
@@ -153,6 +154,7 @@ func getRouterContainer(cr *monitoringv1alpha1.Exporter, exporter ExporterKind) 
 		container.Resources = *cr.Spec.KubeStateMetrics.RouterResource.DeepCopy()
 	case NODE:
 		container.Resources = *cr.Spec.NodeExporter.RouterResource.DeepCopy()
+		container.Env = []v1.EnvVar{{Name: "SERVICE_PORT", Value: fmt.Sprint(getNodeExporterSvcPort(cr))}}
 	default:
 		panic("Impossible exporter kind when creating router container object")
 	}
