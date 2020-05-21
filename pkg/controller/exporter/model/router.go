@@ -162,7 +162,7 @@ func getRouterContainer(cr *monitoringv1alpha1.Exporter, exporter ExporterKind) 
 func getNodeExporterNginxConfig(cr *monitoringv1alpha1.Exporter) (string, error) {
 	paras := routerNginxParas{
 		UpstreamPort: cr.Spec.NodeExporter.HostPort,
-		ListenPort:   cr.Spec.NodeExporter.ServicePort,
+		ListenPort:   getNodeExporterSvcPort(cr),
 		SSLCipers:    sslCiphers,
 		HealthyPort:  cr.Spec.NodeExporter.HealthyPort,
 	}
