@@ -40,7 +40,7 @@ func NodeExporterService(cr *monitoringv1alpha1.Exporter) *v1.Service {
 		},
 		Spec: v1.ServiceSpec{
 			Ports:    getNodeExporterPorts(cr),
-			Selector: getNodeExporterLabels(cr),
+			Selector: getNodeExporterSelectorLabels(),
 			Type:     "ClusterIP",
 		},
 	}
@@ -51,7 +51,6 @@ func UpdatedNodeExporterService(cr *monitoringv1alpha1.Exporter, currService *v1
 	newService := currService.DeepCopy()
 	newService.ObjectMeta.Labels = getNodeExporterLabels(cr)
 	newService.Spec.Ports = getNodeExporterPorts(cr)
-	newService.Spec.Selector = getNodeExporterLabels(cr)
 	return newService
 
 }
@@ -67,7 +66,7 @@ func NodeExporterDaemonset(cr *monitoringv1alpha1.Exporter) *appsv1.DaemonSet {
 		},
 		Spec: appsv1.DaemonSetSpec{
 			Selector: &metav1.LabelSelector{
-				MatchLabels: getNodeExporterLabels(cr),
+				MatchLabels: getNodeExporterSelectorLabels(),
 			},
 			UpdateStrategy: appsv1.DaemonSetUpdateStrategy{
 				Type: appsv1.RollingUpdateDaemonSetStrategyType,
@@ -115,9 +114,6 @@ func UpdatedNodeExporterDeamonset(cr *monitoringv1alpha1.Exporter, currDaemonset
 	newDaemonset := currDaemonset.DeepCopy()
 	containers := []v1.Container{*getNodeExporterContainer(cr), *getRouterContainer(cr, NODE)}
 	newDaemonset.ObjectMeta.Labels = getNodeExporterLabels(cr)
-	newDaemonset.Spec.Selector = &metav1.LabelSelector{
-		MatchLabels: getNodeExporterLabels(cr),
-	}
 	newDaemonset.Spec.Template.ObjectMeta.Labels = getNodeExporterLabels(cr)
 	newDaemonset.Spec.Template.ObjectMeta.Annotations = commonAnnotationns()
 	newDaemonset.Spec.Template.Spec.Containers = containers
@@ -192,13 +188,17 @@ func GetNodeExporterObjName(cr *monitoringv1alpha1.Exporter) string {
 }
 
 func getNodeExporterLabels(cr *monitoringv1alpha1.Exporter) map[string]string {
-	labels := make(map[string]string)
-	labels[AppLabelKey] = AppLabekValue
-	labels["component"] = "nodeexporter"
+	labels := getNodeExporterSelectorLabels()
 	labels = appendCommonLabels(labels)
 	for key, v := range cr.Labels {
 		labels[key] = v
 	}
+	return labels
+}
+func getNodeExporterSelectorLabels() map[string]string {
+	labels := make(map[string]string)
+	labels[AppLabelKey] = AppLabekValue
+	labels["component"] = "nodeexporter"
 	return labels
 }
 

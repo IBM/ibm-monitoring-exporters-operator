@@ -29,13 +29,17 @@ import (
 )
 
 func getCollectdLabels(cr *monitoringv1alpha1.Exporter) map[string]string {
-	labels := make(map[string]string)
-	labels[AppLabelKey] = AppLabekValue
-	labels["component"] = "collectdexporter"
+	labels := getCollectdSelectorLabels()
 	labels = appendCommonLabels(labels)
 	for key, v := range cr.Labels {
 		labels[key] = v
 	}
+	return labels
+}
+func getCollectdSelectorLabels() map[string]string {
+	labels := make(map[string]string)
+	labels[AppLabelKey] = AppLabekValue
+	labels["component"] = "collectdexporter"
 	return labels
 }
 
@@ -81,7 +85,7 @@ func CollectdDeployment(cr *monitoringv1alpha1.Exporter) *appsv1.Deployment {
 		},
 		Spec: appsv1.DeploymentSpec{
 			Selector: &metav1.LabelSelector{
-				MatchLabels: getCollectdLabels(cr),
+				MatchLabels: getCollectdSelectorLabels(),
 			},
 			Replicas: &replicas,
 			Template: v1.PodTemplateSpec{
@@ -178,7 +182,6 @@ func UpdatedCollectdDeployment(cr *monitoringv1alpha1.Exporter, currDeployment *
 	containers := []v1.Container{*getCollectdContainer(cr), *getRouterContainer(cr, COLLECTD)}
 
 	newDeployment.ObjectMeta.Labels = getCollectdLabels(cr)
-	newDeployment.Spec.Selector = &metav1.LabelSelector{MatchLabels: getCollectdLabels(cr)}
 	newDeployment.Spec.Template.ObjectMeta.Labels = getCollectdLabels(cr)
 	newDeployment.Spec.Template.ObjectMeta.Annotations = commonAnnotationns()
 	newDeployment.Spec.Template.Spec.Containers = containers
@@ -212,7 +215,7 @@ func CollectdService(cr *monitoringv1alpha1.Exporter) *v1.Service {
 		},
 		Spec: v1.ServiceSpec{
 			Ports:    getCollectdServicePorts(cr),
-			Selector: getCollectdLabels(cr),
+			Selector: getCollectdSelectorLabels(),
 			Type:     "ClusterIP",
 		},
 	}
@@ -224,6 +227,5 @@ func UpdatedCollectdService(cr *monitoringv1alpha1.Exporter, currService *v1.Ser
 	newService.Labels = getCollectdLabels(cr)
 	newService.Annotations = getCollectdServiceAnnotations()
 	newService.Spec.Ports = getCollectdServicePorts(cr)
-	newService.Spec.Selector = getCollectdLabels(cr)
 	return newService
 }

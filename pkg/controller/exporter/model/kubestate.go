@@ -39,7 +39,7 @@ func KubeStateService(cr *monitoringv1alpha1.Exporter) *v1.Service {
 		},
 		Spec: v1.ServiceSpec{
 			Ports:    getKubeStateServicePorts(cr),
-			Selector: getKubeStateLabels(cr),
+			Selector: getKubeStateSelectorLabels(),
 			Type:     v1.ServiceTypeClusterIP,
 		},
 	}
@@ -50,7 +50,6 @@ func UpdatedKubeStateService(cr *monitoringv1alpha1.Exporter, currService *v1.Se
 	newService := currService.DeepCopy()
 	newService.ObjectMeta.Labels = getKubeStateLabels(cr)
 	newService.Spec.Ports = getKubeStateServicePorts(cr)
-	newService.Spec.Selector = getKubeStateLabels(cr)
 	return newService
 }
 
@@ -66,7 +65,7 @@ func KubeStateDeployment(cr *monitoringv1alpha1.Exporter) *appsv1.Deployment {
 		},
 		Spec: appsv1.DeploymentSpec{
 			Selector: &metav1.LabelSelector{
-				MatchLabels: getKubeStateLabels(cr),
+				MatchLabels: getKubeStateSelectorLabels(),
 			},
 			Replicas: &replicas,
 			Template: v1.PodTemplateSpec{
@@ -110,9 +109,6 @@ func UpdatedKubeStateDeployment(cr *monitoringv1alpha1.Exporter, currDeployment 
 	newDeployment := currDeployment.DeepCopy()
 	containers := []v1.Container{*getKubeStateContainer(cr), *getRouterContainer(cr, KUBE)}
 	newDeployment.ObjectMeta.Labels = getKubeStateLabels(cr)
-	newDeployment.Spec.Selector = &metav1.LabelSelector{
-		MatchLabels: getKubeStateLabels(cr),
-	}
 	newDeployment.Spec.Template.ObjectMeta.Labels = getKubeStateLabels(cr)
 	newDeployment.Spec.Template.ObjectMeta.Annotations = commonAnnotationns()
 	newDeployment.Spec.Template.Spec.Containers = containers
@@ -201,13 +197,17 @@ func GetKubeStateObjName(cr *monitoringv1alpha1.Exporter) string {
 }
 
 func getKubeStateLabels(cr *monitoringv1alpha1.Exporter) map[string]string {
-	labels := make(map[string]string)
-	labels[AppLabelKey] = AppLabekValue
-	labels["component"] = "kube-state-metrics"
+	labels := getKubeStateSelectorLabels()
 	labels = appendCommonLabels(labels)
 	for key, v := range cr.Labels {
 		labels[key] = v
 	}
+	return labels
+}
+func getKubeStateSelectorLabels() map[string]string {
+	labels := make(map[string]string)
+	labels[AppLabelKey] = AppLabekValue
+	labels["component"] = "kube-state-metrics"
 	return labels
 }
 
