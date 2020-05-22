@@ -213,10 +213,17 @@ func getNodeExporterPorts(cr *monitoringv1alpha1.Exporter) []v1.ServicePort {
 	return []v1.ServicePort{
 		{
 			Name:       "metrics",
-			Port:       cr.Spec.NodeExporter.ServicePort,
-			TargetPort: intstr.IntOrString{Type: intstr.Int, IntVal: cr.Spec.NodeExporter.ServicePort},
+			Port:       getNodeExporterSvcPort(cr),
+			TargetPort: intstr.IntOrString{Type: intstr.Int, IntVal: getNodeExporterSvcPort(cr)},
 			Protocol:   "TCP",
 		},
 	}
+
+}
+func getNodeExporterSvcPort(cr *monitoringv1alpha1.Exporter) int32 {
+	if cr.Spec.NodeExporter.ServicePort == 0 || cr.Spec.NodeExporter.ServicePort == 8555 {
+		return 9555
+	}
+	return cr.Spec.NodeExporter.ServicePort
 
 }
