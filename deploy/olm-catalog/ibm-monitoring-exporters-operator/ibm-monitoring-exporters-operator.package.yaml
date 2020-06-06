@@ -1,5 +1,5 @@
 channels:
-- currentCSV: ibm-monitoring-exporters-operator.v1.8.0
+- currentCSV: ibm-monitoring-exporters-operator.v1.9.1
   name: stable-v1
 - currentCSV: ibm-monitoring-exporters-operator.v1.9.1
   name: beta
