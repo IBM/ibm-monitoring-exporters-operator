@@ -15,6 +15,13 @@ spec:
     enable: true
     metricsPort: 8443
     collectorPort: 25826
+    resources:
+      requests:
+        cpu: 200m
+        memory: 256Mi
+      limits:
+        cpu: 300m
+        memory: 512Mi
     routerResource:
       limits:
         cpu: 200m
@@ -28,7 +35,34 @@ spec:
     hostPort: 9109
     servicePort: 8555
     healtyPort: 8556
+    resources:
+      requests:
+        cpu: 200m
+        memory: 256Mi
+      limits:
+        cpu: 300m
+        memory: 512Mi
+    routerResource:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 100m
+        memory: 256Mi
   kubeStateMetrics:
     enable: true
     port: 8443
-
+    resources:
+      requests:
+        cpu: 200m
+        memory: 256Mi
+      limits:
+        cpu: 300m
+        memory: 512Mi
+    routerResource:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 100m
+        memory: 256Mi
