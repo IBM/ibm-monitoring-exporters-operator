@@ -19,7 +19,7 @@ BUILD_LOCALLY ?= 1
 # Image URL to use all building/pushing image targets;
 # Use your own docker registry and image name for dev/test by overridding the IMG and REGISTRY environment variable.
 IMG ?= ibm-monitoring-exporters-operator
-REGISTRY ?= hyc-cloud-private-integration-docker-local.artifactory.swg-devops.com
+REGISTRY ?= hyc-cloud-private-integration-docker-local.artifactory.swg-devops.com/ibmcom
 CSV_VERSION ?= $(VERSION)
 
 # Github host to use for checking the source tree;
