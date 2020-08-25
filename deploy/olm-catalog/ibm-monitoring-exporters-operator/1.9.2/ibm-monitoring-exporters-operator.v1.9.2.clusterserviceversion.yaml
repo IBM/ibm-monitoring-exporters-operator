@@ -292,14 +292,14 @@ spec:
                       - name: OPERATOR_NAME
                         value: ibm-monitoring-exporters-operator
                       - name: ROUTER_IMAGE
-                        value: quay.io/opencloudio/icp-management-ingress@sha256:f6694ea8a461468989874b4b091f1d64366eacb9821cc9836d8100e34f333634
+                        value: quay.io/opencloudio/icp-management-ingress@sha256:c7f4960f2df024cd3b43b08d115047293359478b5b91b15e9f3b8c40a3af74d3
                       - name: COLLECTD_IMAGE
-                        value: quay.io/opencloudio/collectd-exporter@sha256:03a5725f69f764dd5967ecc9b1b84cd8745034bdb7dc659805f3158d9b954657
+                        value: quay.io/opencloudio/collectd-exporter@sha256:ab809994a089c51b498cef7f166612ef6472c6e5358646c66a4dcb6d14c3c489
                       - name: NODE_IMAGE
-                        value: quay.io/opencloudio/node-exporter@sha256:c6e70a339e0cde2b93c16a5640dd986fd46a5faf1e6bcf668f5feba300972c20
+                        value: quay.io/opencloudio/node-exporter@sha256:78634e8f421a7e9de65a3fee153779258fe1c8f2a92a79afea5a0ef74d7c1496
                       - name: KUBESTATE_IMAGE
-                        value: quay.io/opencloudio/kube-state-metrics@sha256:eedcd7aed0ad465c7b2e151916e56013bd92356633a35fe5ab11115f2454c8ae
-                    image: quay.io/opencloudio/ibm-monitoring-exporters-operator@sha256:0d19c31d513e1c1924d354825fae4e4886f56269f56295615068d7d843f4cb15
+                        value: quay.io/opencloudio/kube-state-metrics@sha256:eb56f0f6d8ca5efe646f7408bf5194d1d1fa76940a5d312f704d34de0fe826f7
+                    image: quay.io/opencloudio/ibm-monitoring-exporters-operator
                     imagePullPolicy: Always
                     name: ibm-monitoring-exporters-operator
                     securityContext:
