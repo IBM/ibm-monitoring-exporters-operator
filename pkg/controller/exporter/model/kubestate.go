@@ -79,11 +79,12 @@ func KubeStateDeployment(cr *monitoringv1alpha1.Exporter) *appsv1.Deployment {
 				Spec: v1.PodSpec{
 					//TODO: it requires special privilege
 					//PriorityClassName: "system-cluster-critical",
-					HostPID:     false,
-					HostIPC:     false,
-					HostNetwork: false,
-					Containers:  containers,
-					Volumes:     getVolumes(cr, KUBE),
+					HostPID:      false,
+					HostIPC:      false,
+					HostNetwork:  false,
+					Containers:   containers,
+					Volumes:      getVolumes(cr, KUBE),
+					NodeSelector: cr.Spec.NodeSelector,
 				},
 			},
 		},
@@ -101,6 +102,7 @@ func KubeStateDeployment(cr *monitoringv1alpha1.Exporter) *appsv1.Deployment {
 	} else {
 		deployment.Spec.Template.Spec.ServiceAccountName = DefaultExporterSA
 	}
+
 	return deployment
 }
 
@@ -126,6 +128,7 @@ func UpdatedKubeStateDeployment(cr *monitoringv1alpha1.Exporter, currDeployment 
 	} else {
 		newDeployment.Spec.Template.Spec.ServiceAccountName = DefaultExporterSA
 	}
+	newDeployment.Spec.Template.Spec.NodeSelector = cr.Spec.NodeSelector
 	return newDeployment
 
 }

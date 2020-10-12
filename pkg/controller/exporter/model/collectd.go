@@ -99,11 +99,12 @@ func CollectdDeployment(cr *monitoringv1alpha1.Exporter) *appsv1.Deployment {
 				Spec: v1.PodSpec{
 					//TODO: it requires special privilege
 					//PriorityClassName: "system-cluster-critical",
-					HostPID:     false,
-					HostIPC:     false,
-					HostNetwork: false,
-					Containers:  containers,
-					Volumes:     getVolumes(cr, COLLECTD),
+					HostPID:      false,
+					HostIPC:      false,
+					HostNetwork:  false,
+					Containers:   containers,
+					Volumes:      getVolumes(cr, COLLECTD),
+					NodeSelector: cr.Spec.NodeSelector,
 				},
 			},
 		},
@@ -200,6 +201,7 @@ func UpdatedCollectdDeployment(cr *monitoringv1alpha1.Exporter, currDeployment *
 	} else {
 		newDeployment.Spec.Template.Spec.ServiceAccountName = DefaultExporterSA
 	}
+	newDeployment.Spec.Template.Spec.NodeSelector = cr.Spec.NodeSelector
 
 	return newDeployment
 }
