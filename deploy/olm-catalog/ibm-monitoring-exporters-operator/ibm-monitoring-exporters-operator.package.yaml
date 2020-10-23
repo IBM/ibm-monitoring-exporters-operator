@@ -3,7 +3,7 @@ channels:
     name: stable-v1
   - currentCSV: ibm-monitoring-exporters-operator.v1.9.2
     name: beta
-  - currentCSV: ibm-monitoring-exporters-operator.v1.9.3
+  - currentCSV: ibm-monitoring-exporters-operator.v1.9.4
     name: dev
 defaultChannel: stable-v1
 packageName: ibm-monitoring-exporters-operator-app

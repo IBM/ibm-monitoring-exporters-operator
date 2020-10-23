@@ -99,7 +99,6 @@ func getCollectdNginxConfig(cr *monitoringv1alpha1.Exporter) (string, error) {
 
 //getRouterContainer creates router container object whose values are common to all 3 exporters
 func getRouterContainer(cr *monitoringv1alpha1.Exporter, exporter ExporterKind) *v1.Container {
-	drops := []v1.Capability{"ALL"}
 	adds := []v1.Capability{"CHOWN", "NET_ADMIN", "NET_RAW", "LEASE", "SETGID", "SETUID"}
 	pe := false
 	p := false
@@ -141,8 +140,8 @@ func getRouterContainer(cr *monitoringv1alpha1.Exporter, exporter ExporterKind) 
 			Privileged:               &p,
 			ReadOnlyRootFilesystem:   &rofs,
 			Capabilities: &v1.Capabilities{
-				Drop: drops,
-				Add:  adds,
+				// Drop: drops,
+				Add: adds,
 			},
 		},
 		VolumeMounts: mounts,

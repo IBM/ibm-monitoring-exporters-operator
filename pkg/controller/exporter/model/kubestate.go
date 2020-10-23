@@ -131,12 +131,6 @@ func UpdatedKubeStateDeployment(cr *monitoringv1alpha1.Exporter, currDeployment 
 }
 
 func getKubeStateContainer(cr *monitoringv1alpha1.Exporter) *v1.Container {
-	drops := []v1.Capability{"ALL"}
-	pe := false
-	p := false
-	rofs := true
-	userID := int64(65534)
-	noRoot := true
 	probePort := intstr.IntOrString{Type: intstr.Int, IntVal: 8080}
 	probe := v1.Probe{
 		Handler: v1.Handler{
@@ -162,16 +156,16 @@ func getKubeStateContainer(cr *monitoringv1alpha1.Exporter) *v1.Container {
 		Image:           image,
 		ImagePullPolicy: cr.Spec.ImagePolicy,
 		Resources:       cr.Spec.KubeStateMetrics.Resource,
-		SecurityContext: &v1.SecurityContext{
-			RunAsUser:                &userID,
-			RunAsNonRoot:             &noRoot,
-			AllowPrivilegeEscalation: &pe,
-			Privileged:               &p,
-			ReadOnlyRootFilesystem:   &rofs,
-			Capabilities: &v1.Capabilities{
-				Drop: drops,
-			},
-		},
+		// SecurityContext: &v1.SecurityContext{
+		// 	RunAsUser:                &userID,
+		// 	RunAsNonRoot:             &noRoot,
+		// 	AllowPrivilegeEscalation: &pe,
+		// 	Privileged:               &p,
+		// 	ReadOnlyRootFilesystem:   &rofs,
+		// 	Capabilities: &v1.Capabilities{
+		// 		Drop: drops,
+		// 	},
+		// },
 		ReadinessProbe: &probe,
 		LivenessProbe:  &probe,
 	}

@@ -16,7 +16,7 @@ Red Hat OpenShift Container Platform 4.x or newer installed on one of the follow
 ## Operator versions
 
 - 1.8.0
-- 1.9.0
+- 1.9.2
 
 ## Prerequisites
 
@@ -35,7 +35,47 @@ To install the operator with the IBM Common Services Operator follow the install
 
 ## SecurityContextConstraints Requirements
 
-The ibm-monitoring-exporters-operator supports running under the OpenShift Container Platform default restricted security context constraints. The kube-state-metrics, node-exporter and collectd-exporter run under privileged security constraints.
+The ibm-monitoring-exporters-operator supports running under the OpenShift Container Platform default restricted security context constraints. The kube-state-metrics, node-exporter and collectd-exporter run under custom security constraints.
+
+```
+apiVersion: security.openshift.io/v1
+kind: SecurityContextConstraints
+metadata:
+  annotations:
+    kubernetes.io/description: ibm-monitoring-exporters-scc is based on node-exporter scc
+  name: ibm-monitoring-exporters-scc
+allowHostDirVolumePlugin: true
+allowHostIPC: false
+allowHostNetwork: true
+allowHostPID: true
+allowHostPorts: true
+allowPrivilegeEscalation: true
+allowPrivilegedContainer: true
+allowedCapabilities:
+- CHOWN
+- SETUID
+- SETGID
+- NET_ADMIN
+- NET_RAW
+- LEASE
+defaultAddCapabilities: null
+fsGroup:
+  type: RunAsAny
+groups: []
+priority: null
+readOnlyRootFilesystem: false
+requiredDropCapabilities: null
+runAsUser:
+  type: RunAsAny
+seLinuxContext:
+  type: RunAsAny
+supplementalGroups:
+  type: RunAsAny
+users: []
+volumes:
+- '*'
+```
+
 For more information about the OpenShift Container Platform Security Context Constraints, see [Managing Security Context Constraints](https://docs.openshift.com/container-platform/4.3/authentication/managing-security-context-constraints.html).
 
 ## Developer guide

@@ -77,12 +77,8 @@ func NodeExporterDaemonset(cr *monitoringv1alpha1.Exporter) *appsv1.DaemonSet {
 					Name:        GetNodeExporterObjName(cr),
 					Labels:      getNodeExporterLabels(cr),
 					Annotations: commonAnnotationns(),
-					//TODO: it requires special privilege
-					//Annotations: map[string]string{"scheduler.alpha.kubernetes.io/critical-pod": ""},
 				},
 				Spec: v1.PodSpec{
-					//TODO: it requires special privilige
-					//PriorityClassName: "system-cluster-critical",
 					HostPID:     true,
 					HostIPC:     false,
 					HostNetwork: true,
@@ -135,13 +131,6 @@ func UpdatedNodeExporterDeamonset(cr *monitoringv1alpha1.Exporter, currDaemonset
 
 }
 func getNodeExporterContainer(cr *monitoringv1alpha1.Exporter) *v1.Container {
-	drops := []v1.Capability{"ALL"}
-	pe := false
-	p := false
-	rofs := true
-	userID := int64(65534)
-	noRoot := true
-
 	var image string
 	if strings.Contains(cr.Spec.NodeExporter.Image, `sha256:`) {
 		image = cr.Spec.NodeExporter.Image
@@ -149,20 +138,29 @@ func getNodeExporterContainer(cr *monitoringv1alpha1.Exporter) *v1.Container {
 		image = os.Getenv(nodeExporterImageEnv)
 	}
 
+	userID := int64(65534)
+	p := true
+	noRoot := true
+
 	container := &v1.Container{
 		Name:            "nodeexporter",
 		Image:           image,
 		ImagePullPolicy: cr.Spec.ImagePolicy,
 		Resources:       cr.Spec.NodeExporter.Resource,
+		// SecurityContext: &v1.SecurityContext{
+		// 	RunAsUser:                &userID,
+		// 	RunAsNonRoot:             &noRoot,
+		// 	AllowPrivilegeEscalation: &pe,
+		// 	Privileged:               &p,
+		// 	ReadOnlyRootFilesystem:   &rofs,
+		// 	Capabilities: &v1.Capabilities{
+		// 		Drop: drops,
+		// 	},
+		// },
 		SecurityContext: &v1.SecurityContext{
-			RunAsUser:                &userID,
-			RunAsNonRoot:             &noRoot,
-			AllowPrivilegeEscalation: &pe,
-			Privileged:               &p,
-			ReadOnlyRootFilesystem:   &rofs,
-			Capabilities: &v1.Capabilities{
-				Drop: drops,
-			},
+			RunAsUser:    &userID,
+			RunAsNonRoot: &noRoot,
+			Privileged:   &p,
 		},
 		Args: []string{"--path.procfs=/host/proc", "--path.sysfs=/host/sys", "--web.listen-address=127.0.0.1:" + fmt.Sprint(cr.Spec.NodeExporter.HostPort)},
 		VolumeMounts: []v1.VolumeMount{

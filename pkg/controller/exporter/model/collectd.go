@@ -128,12 +128,6 @@ func CollectdDeployment(cr *monitoringv1alpha1.Exporter) *appsv1.Deployment {
 
 }
 func getCollectdContainer(cr *monitoringv1alpha1.Exporter) *v1.Container {
-	drops := []v1.Capability{"ALL"}
-	pe := false
-	p := false
-	rofs := true
-	userID := int64(65534)
-	noRoot := true
 	probePort := intstr.IntOrString{Type: intstr.Int, IntVal: 9103}
 	cmdArgs := []string{"--collectd.listen-address=:25826"}
 	probe := v1.Probe{
@@ -159,16 +153,16 @@ func getCollectdContainer(cr *monitoringv1alpha1.Exporter) *v1.Container {
 		Image:           image,
 		ImagePullPolicy: cr.Spec.ImagePolicy,
 		Resources:       cr.Spec.Collectd.Resource,
-		SecurityContext: &v1.SecurityContext{
-			RunAsUser:                &userID,
-			RunAsNonRoot:             &noRoot,
-			AllowPrivilegeEscalation: &pe,
-			Privileged:               &p,
-			ReadOnlyRootFilesystem:   &rofs,
-			Capabilities: &v1.Capabilities{
-				Drop: drops,
-			},
-		},
+		// SecurityContext: &v1.SecurityContext{
+		// 	RunAsUser:                &userID,
+		// 	RunAsNonRoot:             &noRoot,
+		// 	AllowPrivilegeEscalation: &pe,
+		// 	Privileged:               &p,
+		// 	ReadOnlyRootFilesystem:   &rofs,
+		// 	Capabilities: &v1.Capabilities{
+		// 		Drop: drops,
+		// 	},
+		// },
 		Args:           cmdArgs,
 		ReadinessProbe: &probe,
 		LivenessProbe:  &probe,

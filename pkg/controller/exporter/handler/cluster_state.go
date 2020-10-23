@@ -100,13 +100,14 @@ func (no *NodeExporterState) read(ctx context.Context, cr *monitoringv1alpha1.Ex
 	service := model.NodeExporterService(cr)
 	key := client.ObjectKey{Name: service.Name, Namespace: service.Namespace}
 	if err := cl.Get(ctx, key, service); err != nil {
-		if errors.IsNotFound(err) {
-			no.Service = nil
-			return nil
+		no.Service = nil
+		if !errors.IsNotFound(err) {
+			return err
 		}
-		return err
+
+	} else {
+		no.Service = service
 	}
-	no.Service = service
 	//read deployment
 	daemonSet := model.NodeExporterDaemonset(cr)
 	key = client.ObjectKey{Name: daemonSet.Name, Namespace: daemonSet.Namespace}
@@ -132,13 +133,14 @@ func (k *KubeStateMetricsState) read(ctx context.Context, cr *monitoringv1alpha1
 	service := model.KubeStateService(cr)
 	key := client.ObjectKey{Name: service.Name, Namespace: service.Namespace}
 	if err := cl.Get(ctx, key, service); err != nil {
-		if errors.IsNotFound(err) {
-			k.Service = nil
-			return nil
+		k.Service = nil
+		if !errors.IsNotFound(err) {
+			return err
 		}
-		return err
+
+	} else {
+		k.Service = service
 	}
-	k.Service = service
 	//read deployment
 	deployment := model.KubeStateDeployment(cr)
 	key = client.ObjectKey{Name: deployment.Name, Namespace: deployment.Namespace}
@@ -165,13 +167,14 @@ func (c *CollectdState) read(ctx context.Context, cr *monitoringv1alpha1.Exporte
 	service := model.CollectdService(cr)
 	key := client.ObjectKey{Namespace: cr.Namespace, Name: model.GetCollectdObjName(cr)}
 	if err := cl.Get(ctx, key, service); err != nil {
-		if errors.IsNotFound(err) {
-			c.Service = nil
-			return nil
+		c.Service = nil
+		if !errors.IsNotFound(err) {
+
+			return err
 		}
-		return err
+	} else {
+		c.Service = service
 	}
-	c.Service = service
 	//check deployment
 	deployment := model.CollectdDeployment(cr)
 	if err := cl.Get(ctx, key, deployment); err != nil {
