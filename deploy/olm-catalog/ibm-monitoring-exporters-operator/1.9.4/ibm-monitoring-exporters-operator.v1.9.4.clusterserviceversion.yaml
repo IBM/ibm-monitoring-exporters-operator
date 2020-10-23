@@ -275,7 +275,7 @@ spec:
               - securitycontextconstraints
               verbs:
               - use
-          serviceAccountName: ibm-monitoring-exporters
+          serviceAccountName: ibm-monitoring-exporter
       deployments:
         - name: ibm-monitoring-exporters-operator
           spec:
