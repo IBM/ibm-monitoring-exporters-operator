@@ -237,6 +237,10 @@ spec:
               required:
               - enable
               type: object
+            nodeSelector:
+              additionalProperties:
+                type: string
+              type: object
             routerImage:
               description: Router image repo and tag
               type: string

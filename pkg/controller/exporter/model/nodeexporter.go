@@ -79,11 +79,12 @@ func NodeExporterDaemonset(cr *monitoringv1alpha1.Exporter) *appsv1.DaemonSet {
 					Annotations: commonAnnotationns(),
 				},
 				Spec: v1.PodSpec{
-					HostPID:     true,
-					HostIPC:     false,
-					HostNetwork: true,
-					Containers:  containers,
-					Volumes:     getVolumes(cr, NODE),
+					HostPID:      true,
+					HostIPC:      false,
+					HostNetwork:  true,
+					Containers:   containers,
+					Volumes:      getVolumes(cr, NODE),
+					NodeSelector: cr.Spec.NodeSelector,
 				},
 			},
 		},
@@ -127,6 +128,8 @@ func UpdatedNodeExporterDeamonset(cr *monitoringv1alpha1.Exporter, currDaemonset
 	} else {
 		newDaemonset.Spec.Template.Spec.ServiceAccountName = DefaultNodeExporterSA
 	}
+
+	newDaemonset.Spec.Template.Spec.NodeSelector = cr.Spec.NodeSelector
 	return newDaemonset
 
 }

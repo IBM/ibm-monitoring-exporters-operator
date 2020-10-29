@@ -44,7 +44,8 @@ type ExporterSpec struct {
 	ImagePullSecrets []string `json:"imagePullSecrets,omitempty"`
 	//Router image repo and tag
 	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
-	RouterImage string `json:"routerImage,omitempty"`
+	RouterImage  string            `json:"routerImage,omitempty"`
+	NodeSelector map[string]string `json:"nodeSelector,omitempty"`
 }
 
 // Certs defines certifications used by all exporters
