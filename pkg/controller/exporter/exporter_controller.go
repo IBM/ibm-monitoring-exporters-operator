@@ -20,6 +20,7 @@ import (
 	"context"
 	"time"
 
+	secv1client "github.com/openshift/client-go/security/clientset/versioned/typed/security/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -52,7 +53,11 @@ func Add(mgr manager.Manager) error {
 
 // newReconciler returns a new reconcile.Reconciler
 func newReconciler(mgr manager.Manager) reconcile.Reconciler {
-	return &ReconcileExporter{client: mgr.GetClient(), scheme: mgr.GetScheme()}
+	return &ReconcileExporter{
+		client:    mgr.GetClient(),
+		scheme:    mgr.GetScheme(),
+		secClient: secv1client.NewForConfigOrDie(mgr.GetConfig()),
+	}
 }
 
 // add adds a new Controller to mgr with r as the reconcile.Reconciler
@@ -114,6 +119,8 @@ type ReconcileExporter struct {
 	// that reads objects from the cache and writes to the apiserver
 	client client.Client
 	scheme *runtime.Scheme
+	// This client is for SCC creation
+	secClient secv1client.SecurityV1Interface
 }
 
 // Reconcile reads that state of the cluster for a Exporter object and makes changes based on the state read
@@ -151,6 +158,7 @@ func (r *ReconcileExporter) Reconcile(request reconcile.Request) (reconcile.Resu
 		CR:           instance,
 		CurrentState: &clusterState,
 		Schema:       r.scheme,
+		SecClient:    r.secClient,
 	}
 	if err := handler.Sync(); err != nil {
 		if !model.IsRequeueErr(err) {

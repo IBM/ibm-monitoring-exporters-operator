@@ -19,6 +19,7 @@ package handler
 import (
 	"context"
 
+	secv1client "github.com/openshift/client-go/security/clientset/versioned/typed/security/v1"
 	kerrors "k8s.io/apimachinery/pkg/api/errors"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -39,10 +40,17 @@ type Handler struct {
 	CR           *monitoringv1alpha1.Exporter
 	CurrentState *ClusterState
 	Schema       *runtime.Scheme
+	SecClient    secv1client.SecurityV1Interface
 }
 
 // Sync is entry point of Handler and makes cluster status as expected
 func (h *Handler) Sync() error {
+	err := model.CreateOrUpdateSCC(h.SecClient)
+	if err != nil {
+		log.Error(err, "Fail to reconsile SCC")
+		return err
+	}
+	log.Info("SCC is reconciled")
 	if err := h.updateStatus(); err != nil {
 		return err
 	}

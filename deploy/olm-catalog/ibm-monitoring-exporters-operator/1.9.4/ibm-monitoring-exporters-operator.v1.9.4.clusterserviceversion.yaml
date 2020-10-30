@@ -152,101 +152,130 @@ spec:
       mediatype: image/png
   install:
     spec:
+      Permissions:
+        - rules:
+            - apiGroups:
+              - ""
+              resources:
+              - services
+              - configmaps
+              - pods
+              - endpoints
+              - events
+              - secrets
+              verbs:
+              - '*'
+            - apiGroups:
+              - apps
+              resources:
+              - deployments
+              - daemonsets
+              - replicasets
+              verbs:
+              - '*'
+            - apiGroups:
+              - monitoring.coreos.com
+              resources:
+              - servicemonitors
+              verbs:
+              - get
+              - create
+            - apiGroups:
+              - monitoring.operator.ibm.com
+              resources:
+              - exporters
+              - exporters/finalizers
+              - exporters/status
+              verbs:
+              - '*'
+            - apiGroups:
+              - certmanager.k8s.io
+              resources:
+              - certificates
+              verbs:
+              - '*'    
+          serviceAccountName: ibm-monitoring-exporters-operator 
       clusterPermissions:
         - rules:
             - apiGroups:
-                - ""
+              - certmanager.k8s.io
               resources:
-                - "*"
+              - clusterissuers
               verbs:
-                - list
+              - use
             - apiGroups:
-                - apps
+              - security.openshift.io
               resources:
-                - "*"
+              - securitycontextconstraints
               verbs:
-                - list
-            - apiGroups:
-                - batch
-              resources:
-                - "*"
-              verbs:
-                - list
-            - apiGroups:
-                - extensions
-              resources:
-                - "*"
-              verbs:
-                - list
-            - apiGroups:
-                - networking.k8s.io
-              resources:
-                - "*"
-              verbs:
-                - list
-            - apiGroups:
-                - storage.k8s.io
-              resources:
-                - "*"
-              verbs:
-                - list
-            - apiGroups:
-                - security.openshift.io
-              resourceNames:
-                - privileged
-              resources:
-                - securitycontextconstraints
-              verbs:
-                - use
-          serviceAccountName: ibm-monitoring-exporter
+              - create
+              - update
+              - get
+          serviceAccountName: ibm-monitoring-exporters-operator
         - rules:
             - apiGroups:
-                - ""
+              - ""
               resources:
-                - services
-                - configmaps
-                - pods
-                - endpoints
-                - events
-                - secrets
+              - '*'
               verbs:
-                - "*"
+              - list
             - apiGroups:
-                - apps
+              - apps
               resources:
-                - deployments
-                - daemonsets
-                - replicasets
+              - '*'
               verbs:
-                - "*"
+              - list
             - apiGroups:
-                - monitoring.coreos.com
+              - batch
               resources:
-                - servicemonitors
+              - '*'
               verbs:
-                - get
-                - create
+              - list
             - apiGroups:
-                - monitoring.operator.ibm.com
+              - extensions
               resources:
-                - exporters
-                - exporters/finalizers
-                - exporters/status
+              - '*'
               verbs:
-                - "*"
+              - list
             - apiGroups:
-                - certmanager.k8s.io
+              - networking.k8s.io
               resources:
-                - certificates
+              - '*'
               verbs:
-                - "*"
+              - list
             - apiGroups:
-                - certmanager.k8s.io
+              - storage.k8s.io
               resources:
-                - clusterissuers
+              - '*'
               verbs:
-                - use
-          serviceAccountName: ibm-monitoring-exporters-operator
+              - list
+            - apiGroups:
+              - autoscaling
+              resources:
+              - '*'
+              verbs:
+              - list
+            - apiGroups:
+              - policy
+              resources:
+              - '*'
+              verbs:
+              - list
+            - apiGroups:
+              - admissionregistration.k8s.io
+              resources:
+              - '*'
+              verbs:
+              - list
+            - apiGroups:
+              - security.openshift.io
+              resourceNames:
+              - ibm-monitoring-exporters-scc
+              resources:
+              - securitycontextconstraints
+              verbs:
+              - use
+          serviceAccountName: ibm-monitoring-exporter
       deployments:
         - name: ibm-monitoring-exporters-operator
           spec:
