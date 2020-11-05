@@ -267,14 +267,6 @@ spec:
               - '*'
               verbs:
               - list
-            - apiGroups:
-              - security.openshift.io
-              resourceNames:
-              - ibm-monitoring-exporters-scc
-              resources:
-              - securitycontextconstraints
-              verbs:
-              - use
           serviceAccountName: ibm-monitoring-exporter
       deployments:
         - name: ibm-monitoring-exporters-operator

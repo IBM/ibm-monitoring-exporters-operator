@@ -88,14 +88,6 @@ rules:
   - '*'
   verbs:
   - list
-- apiGroups:
-  - security.openshift.io
-  resourceNames:
-  - ibm-monitoring-exporters-scc
-  resources:
-  - securitycontextconstraints
-  verbs:
-  - use
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role

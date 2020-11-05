@@ -45,7 +45,7 @@ type Handler struct {
 
 // Sync is entry point of Handler and makes cluster status as expected
 func (h *Handler) Sync() error {
-	err := model.CreateOrUpdateSCC(h.SecClient)
+	err := model.CreateOrUpdateSCC(h.SecClient, h.CR.Namespace)
 	if err != nil {
 		log.Error(err, "Fail to reconsile SCC")
 		return err
