@@ -37,7 +37,7 @@ To install the operator with the IBM Common Services Operator follow the install
 
 The ibm-monitoring-exporters-operator supports running under the OpenShift Container Platform default restricted security context constraints. The kube-state-metrics, node-exporter and collectd-exporter run under custom security constraints.
 
-```
+```yaml
 apiVersion: security.openshift.io/v1
 kind: SecurityContextConstraints
 metadata:
@@ -86,4 +86,4 @@ As a developer, if you want to build and test this operator to try out and learn
 
 ### End-to-End testing
 
-For more instructions on how to run end-to-end testing with the Operand Deployment Lifecycle Manager, see [ODLM guide](https://github.com/IBM/operand-deployment-lifecycle-manager/blob/master/docs/install/common-service-integration.md#end-to-end-test).
+For more instructions on how to run end-to-end testing with the Operand Deployment Lifecycle Manager, see [ODLM guide](https://github.com/IBM/operand-deployment-lifecycle-manager/blob/master/docs/dev/e2e.md).
