@@ -45,7 +45,7 @@ spec:
       containers:
         - name: ibm-monitoring-exporters-operator
           # Replace this with the built image name
-          image: quay.io/opencloudio/ibm-monitoring-exporters-operator:1.9.1
+          image: quay.io/opencloudio/ibm-monitoring-exporters-operator
           command:
             - ibm-monitoring-exporters-operator
           imagePullPolicy: Always
