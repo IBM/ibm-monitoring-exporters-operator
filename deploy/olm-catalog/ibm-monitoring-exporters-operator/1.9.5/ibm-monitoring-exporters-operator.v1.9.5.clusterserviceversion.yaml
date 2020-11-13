@@ -197,7 +197,7 @@ spec:
             - apiGroups:
               - certmanager.k8s.io
               resources:
-              - clusterissuers
+              - issuers
               verbs:
               - use
           serviceAccountName: ibm-monitoring-exporters-operator 
