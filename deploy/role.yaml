@@ -10,12 +10,6 @@ metadata:
   name: ibm-monitoring-exporters-operator
 rules:
 - apiGroups:
-  - certmanager.k8s.io
-  resources:
-  - clusterissuers
-  verbs:
-  - use
-- apiGroups:
   - security.openshift.io
   resources:
   - securitycontextconstraints
@@ -139,3 +133,9 @@ rules:
   - certificates
   verbs:
   - '*'
+- apiGroups:
+  - certmanager.k8s.io
+  resources:
+  - issuers
+  verbs:
+  - use

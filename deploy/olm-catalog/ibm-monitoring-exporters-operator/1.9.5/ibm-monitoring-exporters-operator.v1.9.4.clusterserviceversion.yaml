@@ -194,15 +194,15 @@ spec:
               - certificates
               verbs:
               - '*'    
-          serviceAccountName: ibm-monitoring-exporters-operator 
-      clusterPermissions:
-        - rules:
             - apiGroups:
               - certmanager.k8s.io
               resources:
               - clusterissuers
               verbs:
               - use
+          serviceAccountName: ibm-monitoring-exporters-operator 
+      clusterPermissions:
+        - rules:
             - apiGroups:
               - security.openshift.io
               resources:
