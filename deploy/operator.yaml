@@ -76,7 +76,7 @@ spec:
             - name: OPERATOR_NAME
               value: "ibm-monitoring-exporters-operator"
             - name: ROUTER_IMAGE
-              value: quay.io/opencloudio/icp-management-ingress@sha256:692dc5ad8b68d3445e787bdcc9a28fdfb50c82d93d1b990cc3378f35f516b78c
+              value: quay.io/opencloudio/icp-management-ingress@sha256:fa6650cd65f943d5d3c8c6fd84ae97abdd51396bed9b2ffaae2895b484435e26
             - name: COLLECTD_IMAGE
               value: quay.io/opencloudio/collectd-exporter@sha256:b83b7867ae422fcc0cd2616b773d904b4c8b26299d0c81d85784b09252ed0874
             - name: NODE_IMAGE
