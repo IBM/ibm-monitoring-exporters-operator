@@ -371,5 +371,5 @@ spec:
       url: https://github.com/IBM/ibm-monitoring-exporters-operator
   provider:
     name: IBM
-  replaces: ibm-monitoring-exporters-operator.v1.9.3
+  replaces: ibm-monitoring-exporters-operator.v1.9.4
   version: 1.9.5
