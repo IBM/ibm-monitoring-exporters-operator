@@ -78,8 +78,8 @@ spec:
             - name: ROUTER_IMAGE
               value: quay.io/opencloudio/icp-management-ingress@sha256:fedfb66a2c552d6bf1a741dbe42b74aaf0775f8a0618b1f39815474ebc811b7b
             - name: COLLECTD_IMAGE
-              value: quay.io/opencloudio/collectd-exporter@sha256:96ec24158e4c4c5b7e687943bb45e71f5359def6b467d25477bb3476827eda43
+              value: quay.io/opencloudio/collectd-exporter@sha256:b7e7bd91a3794d1008163c1569ec9c7973d1424ee46a429a110f3fcf9a107f50
             - name: NODE_IMAGE
-              value: quay.io/opencloudio/node-exporter@sha256:b10e8f47e168f4e07aa68c673d937b710bb265c6073c812b687ee68a640079e4
+              value: quay.io/opencloudio/node-exporter@sha256:0951bb4901f2cf0da5d80c6e6e74cbb1bb084b1c7c9b56e32b72ab8f955ca3b3
             - name: KUBESTATE_IMAGE
-              value: quay.io/opencloudio/kube-state-metrics@sha256:12d5f8f6c6b40a67a0c7f629306751275df732709007090344fde7af86c6548d
+              value: quay.io/opencloudio/kube-state-metrics@sha256:738fb9718d139f63925c55cb5f6f59eef16170fa25d4c5772c9e98432419236f
