@@ -45,4 +45,6 @@ replace github.com/docker/docker => github.com/moby/moby v0.7.3-0.20190826074503
 
 replace github.com/openshift/api => github.com/openshift/api v0.0.0-20190924102528-32369d4db2ad // Required until https://github.com/operator-framework/operator-lifecycle-manager/pull/1241 is resolved
 
+replace github.com/gogo/protobuf => github.com/gogo/protobuf v1.3.2
+
 module github.com/IBM/ibm-monitoring-exporters-operator
