@@ -182,6 +182,16 @@ func UpdatedCollectdDeployment(cr *monitoringv1alpha1.Exporter, currDeployment *
 	newDeployment.Spec.Template.Spec.Containers = containers
 	newDeployment.Spec.Template.Spec.Volumes = getVolumes(cr, COLLECTD)
 
+	// Preserve cert-manager added labels in metadata
+	if val, ok := currDeployment.ObjectMeta.Labels[CertManagerLabel]; ok {
+		newDeployment.ObjectMeta.Labels[CertManagerLabel] = val
+	}
+
+	// Preserve cert-manager added labels in spec
+	if val, ok := currDeployment.Spec.Template.ObjectMeta.Labels[CertManagerLabel]; ok {
+		newDeployment.Spec.Template.ObjectMeta.Labels[CertManagerLabel] = val
+	}
+
 	if cr.Spec.ImagePullSecrets != nil && len(cr.Spec.ImagePullSecrets) != 0 {
 		var secrets []v1.LocalObjectReference
 		for _, secret := range cr.Spec.ImagePullSecrets {
