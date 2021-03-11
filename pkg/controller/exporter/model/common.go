@@ -77,7 +77,8 @@ const (
 	TrueStr = "true"
 	//HTTPSStr string of https
 	HTTPSStr = "https"
-
+	// cert restart label
+	CertManagerLabel = "certmanager.k8s.io/time-restarted"
 	//DefaultNodeExporterSA is default sa for node exporter
 	DefaultNodeExporterSA = "ibm-monitoring-exporter"
 	//DefaultExporterSA is default sa for other exporters
