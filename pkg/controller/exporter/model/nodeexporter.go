@@ -115,6 +115,17 @@ func UpdatedNodeExporterDeamonset(cr *monitoringv1alpha1.Exporter, currDaemonset
 	newDaemonset.Spec.Template.ObjectMeta.Annotations = commonAnnotationns()
 	newDaemonset.Spec.Template.Spec.Containers = containers
 	newDaemonset.Spec.Template.Spec.Volumes = getVolumes(cr, NODE)
+
+	// Preserve cert-manager added labels in metadata
+	if val, ok := currDaemonset.ObjectMeta.Labels[CertManagerLabel]; ok {
+		newDaemonset.ObjectMeta.Labels[CertManagerLabel] = val
+	}
+
+	// Preserve cert-manager added labels in spec
+	if val, ok := currDaemonset.Spec.Template.ObjectMeta.Labels[CertManagerLabel]; ok {
+		newDaemonset.Spec.Template.ObjectMeta.Labels[CertManagerLabel] = val
+	}
+
 	if cr.Spec.ImagePullSecrets != nil && len(cr.Spec.ImagePullSecrets) != 0 {
 		var secrets []v1.LocalObjectReference
 		for _, secret := range cr.Spec.ImagePullSecrets {
