@@ -212,6 +212,9 @@ spec:
               - get
               - list
               - watch
+              - create
+              - update
+              - delete
           serviceAccountName: ibm-monitoring-exporters-operator 
       clusterPermissions:
         - rules:
