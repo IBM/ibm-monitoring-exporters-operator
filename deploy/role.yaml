@@ -151,3 +151,6 @@ rules:
   - get
   - list
   - watch
+  - create
+  - update
+  - deleteßßß
