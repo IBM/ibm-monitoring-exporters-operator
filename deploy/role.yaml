@@ -153,4 +153,4 @@ rules:
   - watch
   - create
   - update
-  - deleteßßß
+  - delete

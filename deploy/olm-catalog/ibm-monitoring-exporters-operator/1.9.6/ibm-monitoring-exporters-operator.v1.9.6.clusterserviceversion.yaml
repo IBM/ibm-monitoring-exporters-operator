@@ -164,12 +164,12 @@ spec:
                 - events
                 - secrets
               verbs:
-              - get
-              - list
-              - watch
-              - create
-              - update
-              - delete
+                - get
+                - list
+                - watch
+                - create
+                - update
+                - delete
             - apiGroups:
                 - apps
               resources:
@@ -178,12 +178,12 @@ spec:
                 - replicasets
                 - deployments/finalizers
               verbs:
-              - get
-              - list
-              - watch
-              - create
-              - update
-              - delete
+                - get
+                - list
+                - watch
+                - create
+                - update
+                - delete
             - apiGroups:
                 - monitoring.coreos.com
               resources:
@@ -198,23 +198,23 @@ spec:
                 - exporters/finalizers
                 - exporters/status
               verbs:
-              - get
-              - list
-              - watch
-              - create
-              - update
-              - delete
+                - get
+                - list
+                - watch
+                - create
+                - update
+                - delete
             - apiGroups:
                 - certmanager.k8s.io
               resources:
                 - certificates
               verbs:
-              - get
-              - list
-              - watch
-              - create
-              - update
-              - delete
+                - get
+                - list
+                - watch
+                - create
+                - update
+                - delete
           serviceAccountName: ibm-monitoring-exporters-operator
       clusterPermissions:
         - rules:
