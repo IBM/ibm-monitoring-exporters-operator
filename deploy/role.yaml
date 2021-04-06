@@ -103,15 +103,26 @@ rules:
   - events
   - secrets
   verbs:
-  - '*'
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - delete
 - apiGroups:
   - apps
   resources:
   - deployments
   - daemonsets
   - replicasets
+  - deployments/finalizers
   verbs:
-  - '*'
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - delete
 - apiGroups:
   - monitoring.coreos.com
   resources:
@@ -126,16 +137,17 @@ rules:
   - exporters/finalizers
   - exporters/status
   verbs:
-  - '*'
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - delete
 - apiGroups:
   - certmanager.k8s.io
   resources:
   - certificates
   verbs:
-  - '*'
-- apiGroups:
-  - certmanager.k8s.io
-  resources:
-  - issuers
-  verbs:
-  - use
+  - get
+  - list
+  - watch
