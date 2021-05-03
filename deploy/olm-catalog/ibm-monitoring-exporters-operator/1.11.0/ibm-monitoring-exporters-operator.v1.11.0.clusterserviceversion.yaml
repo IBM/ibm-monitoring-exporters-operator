@@ -316,13 +316,13 @@ spec:
                             fieldPath: metadata.name
                       - name: OPERATOR_NAME
                         value: ibm-monitoring-exporters-operator
-                      - name: ROUTER_IMAGE
+                      - name: ICP_MANAGEMENT_INGRESS_IMAGE
                         value: quay.io/opencloudio/icp-management-ingress:2.5.11
-                      - name: COLLECTD_IMAGE
+                      - name: COLLECTD_EXPORTER_IMAGE
                         value: quay.io/opencloudio/collectd-exporter:v0.4.0-build.10
-                      - name: NODE_IMAGE
+                      - name: NODE_EXPORTER_IMAGE
                         value: quay.io/opencloudio/node-exporter:v0.18.1-build.7
-                      - name: KUBESTATE_IMAGE
+                      - name: KUBE_STATE_METRICS_IMAGE
                         value: quay.io/opencloudio/kube-state-metrics:v1.9.4-build.7
                     image: quay.io/opencloudio/ibm-monitoring-exporters-operator
                     imagePullPolicy: Always
