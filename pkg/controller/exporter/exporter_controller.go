@@ -18,7 +18,6 @@ package exporter
 
 import (
 	"context"
-	"time"
 
 	secv1client "github.com/openshift/client-go/security/clientset/versioned/typed/security/v1"
 	appsv1 "k8s.io/api/apps/v1"
@@ -34,8 +33,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
 	monitoringv1alpha1 "github.com/IBM/ibm-monitoring-exporters-operator/pkg/apis/monitoring/v1alpha1"
-	exporterhandler "github.com/IBM/ibm-monitoring-exporters-operator/pkg/controller/exporter/handler"
-	"github.com/IBM/ibm-monitoring-exporters-operator/pkg/controller/exporter/model"
 )
 
 var log = logf.Log.WithName("controller_exporter")
@@ -147,24 +144,6 @@ func (r *ReconcileExporter) Reconcile(request reconcile.Request) (reconcile.Resu
 		}
 		// Error reading the object - requeue the request.
 		return reconcile.Result{}, err
-	}
-	clusterState := exporterhandler.ClusterState{}
-	if err := clusterState.Read(ctx, instance, r.client); err != nil {
-		return reconcile.Result{}, err
-	}
-	handler := exporterhandler.Handler{
-		Context:      ctx,
-		Client:       r.client,
-		CR:           instance,
-		CurrentState: &clusterState,
-		Schema:       r.scheme,
-		SecClient:    r.secClient,
-	}
-	if err := handler.Sync(); err != nil {
-		if !model.IsRequeueErr(err) {
-			return reconcile.Result{}, err
-		}
-		return reconcile.Result{Requeue: true, RequeueAfter: time.Second}, nil
 	}
 
 	return reconcile.Result{}, nil
