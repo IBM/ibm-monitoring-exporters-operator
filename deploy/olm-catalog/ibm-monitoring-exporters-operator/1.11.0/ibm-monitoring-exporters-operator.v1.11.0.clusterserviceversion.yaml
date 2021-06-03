@@ -86,6 +86,17 @@ metadata:
   name: ibm-monitoring-exporters-operator.v1.11.0
   namespace: placeholder
 spec:
+  relatedImages:
+    - name: ICP_MANAGEMENT_INGRESS_IMAGE
+      image: quay.io/opencloudio/icp-management-ingress:2.5.11
+    - name: COLLECTD_EXPORTER_IMAGE
+      image: quay.io/opencloudio/collectd-exporter:v0.4.0-build.10
+    - name: NODE_EXPORTER_IMAGE
+      image: quay.io/opencloudio/node-exporter:v0.18.1-build.7
+    - name: KUBE_STATE_METRICS_IMAGE
+      image: quay.io/opencloudio/kube-state-metrics:v1.9.4-build.7
+    - name: ibm-monitoring-exporters-operator
+      image: quay.io/opencloudio/ibm-monitoring-exporters-operator
   apiservicedefinitions: {}
   customresourcedefinitions:
     owned:
