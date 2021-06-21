@@ -349,6 +349,7 @@ spec:
     - supported: false
       type: AllNamespaces
   maturity: stable
+  minKubeVersion: "1.19.0"
   keywords:
     - monitoring
     - exporters
