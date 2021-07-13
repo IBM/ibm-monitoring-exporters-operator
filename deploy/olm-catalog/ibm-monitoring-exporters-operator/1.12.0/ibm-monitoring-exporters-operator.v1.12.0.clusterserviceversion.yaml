@@ -92,7 +92,9 @@ spec:
   apiservicedefinitions: {}
   customresourcedefinitions:
     owned:
-      - description: Exporter is the Schema for the exporters API
+      - description: 'Documentation For additional details regarding install parameters
+        check: https://ibm.biz/icpfs39install. License By installing this product
+        you accept the license terms https://ibm.biz/icpfs39license'
         displayName: IBM Monitoring Exporter
         kind: Exporter
         name: exporters.monitoring.operator.ibm.com
