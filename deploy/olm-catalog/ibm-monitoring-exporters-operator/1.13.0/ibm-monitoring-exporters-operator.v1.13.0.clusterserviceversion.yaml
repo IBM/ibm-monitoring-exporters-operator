@@ -319,7 +319,7 @@ spec:
                       - name: OPERATOR_NAME
                         value: ibm-monitoring-exporters-operator
                     image: quay.io/opencloudio/ibm-monitoring-exporters-operator
-                    imagePullPolicy: Always
+                    imagePullPolicy: IfNotPresent
                     name: ibm-monitoring-exporters-operator
                     securityContext:
                       privileged: false
