@@ -102,10 +102,10 @@ const (
 	NODE = ExporterKind("node")
 	//KUBE means it is kube-state-metrics
 	KUBE                 = ExporterKind("kube")
-	routerImageEnv       = "ROUTER_IMAGE"
-	collectdImageEnv     = "COLLECTD_IMAGE"
-	nodeExporterImageEnv = "NODE_IMAGE"
-	kubeStateImageEnv    = "KUBESTATE_IMAGE"
+	routerImageEnv       = "ICP_MANAGEMENT_INGRESS_IMAGE"
+	collectdImageEnv     = "COLLECTD_EXPORTER_IMAGE"
+	nodeExporterImageEnv = "NODE_EXPORTER_IMAGE"
+	kubeStateImageEnv    = "KUBE_STATE_METRICS_IMAGE"
 
 	sslCiphers        = `ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256`
 	routerNginxConfig = `
