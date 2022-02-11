@@ -76,10 +76,10 @@ spec:
             - name: OPERATOR_NAME
               value: "ibm-monitoring-exporters-operator"
             - name: ICP_MANAGEMENT_INGRESS_IMAGE
-              value: quay.io/opencloudio/icp-management-ingress:2.5.11
+              value: quay.io/opencloudio/icp-management-ingress:2.5.20
             - name: COLLECTD_EXPORTER_IMAGE
-              value: quay.io/opencloudio/collectd-exporter:v0.4.0-build.10
+              value: quay.io/opencloudio/collectd-exporter:v0.4.0-build.13
             - name: NODE_EXPORTER_IMAGE
-              value: quay.io/opencloudio/node-exporter:v0.18.1-build.7
+              value: quay.io/opencloudio/node-exporter:v0.18.1-build.10
             - name: KUBE_STATE_METRICS_IMAGE
-              value: quay.io/opencloudio/kube-state-metrics:v1.9.4-build.7
+              value: quay.io/opencloudio/kube-state-metrics:v1.9.4-build.10
